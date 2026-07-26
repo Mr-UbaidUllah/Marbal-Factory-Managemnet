@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:factory_management/core/theme/app_colors.dart';
 import 'package:factory_management/core/theme/app_text_styles.dart';
+import 'package:factory_management/features/website/presentation/pages/website_home_page.dart';
 
 class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
   const TopAppBar({super.key});
@@ -20,8 +21,9 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
       child: Row(
         children: [
           Text("ALAM MARBLE & GRANITE FACTORY",
-            style: AppTextStyles.h1.copyWith(color: Color(0xFF005C55), fontWeight: FontWeight.bold, fontSize: 24),
+            style: AppTextStyles.h1.copyWith(color: const Color(0xFF005C55), fontWeight: FontWeight.bold, fontSize: 24),
           ),
+          const SizedBox(width: 32),
           _buildSearchField(),
           const Spacer(),
           _buildIconButton(Icons.notification_add_outlined, hasBadge: true),
@@ -30,6 +32,17 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
           const SizedBox(width: 24),
           _buildLanguageSelector(),
           const SizedBox(width: 16),
+          _buildActionButton(
+            label: "View Website",
+            icon: HugeIcons.global,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const WebsiteHomePage()),
+              );
+            },
+          ),
+          const SizedBox(width: 24),
           _buildUserProfile(),
         ],
       ),
@@ -39,7 +52,7 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget _buildSearchField() {
     return Container(
       width: 392,
-      height: 21,
+      height: 44,
       decoration: BoxDecoration(
         color: AppColors.lightGray,
         borderRadius: BorderRadius.circular(12),
@@ -74,7 +87,7 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
   }) {
     return ElevatedButton.icon(
       onPressed: onPressed,
-      icon: Icon(icon, size: 18, color: Colors.white),
+      icon: HugeIcon(icon: icon, color: Colors.white, size: 18),
       label: Text(label, style: AppTextStyles.button),
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.primary,
@@ -116,20 +129,14 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
       child: Row(
         children: [
           const Icon(
-            Icons.network_cell,
+            Icons.language,
             size: 20,
             color: AppColors.textSecondary,
           ),
+          const SizedBox(width: 4),
+          Text("EN", style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
         ],
       ),
-    );
-  }
-
-  Widget _buildDarkModeToggle() {
-    return const Icon(
-      Icons.shield_moon,
-      size: 20,
-      color: AppColors.textSecondary,
     );
   }
 
@@ -160,7 +167,7 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         const SizedBox(width: 4),
         const Icon(
-          Icons.arrow_downward,
+          Icons.keyboard_arrow_down,
           size: 16,
           color: AppColors.textSecondary,
         ),
