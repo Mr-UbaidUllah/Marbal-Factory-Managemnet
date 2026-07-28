@@ -110,7 +110,7 @@ class _FeatureCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(feature['icon'] as IconData, color: AppColors.gold, size: 40),
-          const SizedBox(height: 20),
+          const SizedBox(height: 19),
           Text(
             feature['title'] as String,
             style: AppTextStyles.h3.copyWith(color: Colors.white, fontSize: 20),

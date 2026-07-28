@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:factory_management/core/theme/app_theme.dart';
-import 'package:factory_management/core/config/app_config.dart';
-import 'package:factory_management/features/dashboard/presentation/pages/dashboard_page.dart';
+import 'package:factory_management/core/router/app_router.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -15,12 +14,12 @@ class App extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return MaterialApp(
+        return MaterialApp.router(
           title: 'Alam Marble & Granite Factory',
           theme: AppTheme.light,
           darkTheme: AppTheme.dark,
           debugShowCheckedModeBanner: false,
-          home: const DashboardPage(),
+          routerConfig: AppRouter.router,
         );
       },
     );

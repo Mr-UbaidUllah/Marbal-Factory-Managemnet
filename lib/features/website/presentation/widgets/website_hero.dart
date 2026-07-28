@@ -106,7 +106,7 @@ class WebsiteHero extends StatelessWidget {
           right: 0,
           child: Center(
             child: FadeInDown(
-              infinite: true,
+              animate: true,
               child: const Icon(Icons.keyboard_arrow_down, color: Colors.white, size: 40),
             ),
           ),

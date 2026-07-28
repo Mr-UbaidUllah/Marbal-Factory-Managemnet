@@ -1,48 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:factory_management/core/theme/app_colors.dart';
 import 'package:factory_management/core/theme/app_text_styles.dart';
+import 'package:factory_management/features/website/domain/entities/product.dart';
+import 'package:factory_management/features/website/presentation/bloc/website_bloc.dart';
+import 'package:factory_management/features/website/presentation/bloc/website_state.dart';
 
 class FeaturedProducts extends StatelessWidget {
   const FeaturedProducts({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final products = [
-      {
-        'name': 'Calacatta Borghini',
-        'category': 'Marble',
-        'origin': 'Italy',
-        'image': 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1000&auto=format&fit=crop',
-        'price': 'From \$250/sqm',
-        'rating': 5.0,
-      },
-      {
-        'name': 'Black Galaxy',
-        'category': 'Granite',
-        'origin': 'India',
-        'image': 'https://images.unsplash.com/photo-1590273332324-214972f3f69b?q=80&w=1000&auto=format&fit=crop',
-        'price': 'From \$120/sqm',
-        'rating': 4.8,
-      },
-      {
-        'name': 'Royal White',
-        'category': 'Quartz',
-        'origin': 'Vietnam',
-        'image': 'https://images.unsplash.com/photo-1615529328331-f8917597711f?q=80&w=1000&auto=format&fit=crop',
-        'price': 'From \$180/sqm',
-        'rating': 4.9,
-      },
-      {
-        'name': 'Golden Spider',
-        'category': 'Marble',
-        'origin': 'Greece',
-        'image': 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=1000&auto=format&fit=crop',
-        'price': 'From \$210/sqm',
-        'rating': 5.0,
-      },
-    ];
-
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 100, horizontal: 80),
       color: AppColors.lightGray.withOpacity(0.5),
@@ -91,20 +60,33 @@ class FeaturedProducts extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 60),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
-              crossAxisSpacing: 24,
-              mainAxisSpacing: 24,
-              childAspectRatio: 0.75,
-            ),
-            itemCount: products.length,
-            itemBuilder: (context, index) {
-              return FadeInUp(
-                delay: Duration(milliseconds: 150 * index),
-                child: _ProductCard(product: products[index]),
+          BlocBuilder<WebsiteBloc, WebsiteState>(
+            builder: (context, state) {
+              if (state.status == WebsiteStatus.loading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (state.status == WebsiteStatus.failure) {
+                return Center(child: Text(state.errorMessage ?? 'Error loading products'));
+              }
+              
+              final products = state.featuredProducts;
+              
+              return GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 4,
+                  crossAxisSpacing: 24,
+                  mainAxisSpacing: 24,
+                  childAspectRatio: 0.75,
+                ),
+                itemCount: products.length,
+                itemBuilder: (context, index) {
+                  return FadeInUp(
+                    delay: Duration(milliseconds: 150 * index),
+                    child: _ProductCard(product: products[index]),
+                  );
+                },
               );
             },
           ),
@@ -115,7 +97,7 @@ class FeaturedProducts extends StatelessWidget {
 }
 
 class _ProductCard extends StatefulWidget {
-  final Map<String, dynamic> product;
+  final Product product;
   const _ProductCard({required this.product});
 
   @override
@@ -154,7 +136,7 @@ class _ProductCardState extends State<_ProductCard> {
                     child: SizedBox(
                       width: double.infinity,
                       child: Image.network(
-                        widget.product['image'],
+                        widget.product.image,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -200,7 +182,7 @@ class _ProductCardState extends State<_ProductCard> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        widget.product['category'],
+                        widget.product.category,
                         style: AppTextStyles.label.copyWith(color: AppColors.textSecondary),
                       ),
                       Row(
@@ -208,7 +190,7 @@ class _ProductCardState extends State<_ProductCard> {
                           const Icon(Icons.star, color: AppColors.gold, size: 16),
                           const SizedBox(width: 4),
                           Text(
-                            widget.product['rating'].toString(),
+                            widget.product.rating.toString(),
                             style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.bold),
                           ),
                         ],
@@ -217,12 +199,12 @@ class _ProductCardState extends State<_ProductCard> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    widget.product['name'],
+                    widget.product.name,
                     style: AppTextStyles.h3.copyWith(fontSize: 18),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "Origin: ${widget.product['origin']}",
+                    "Origin: ${widget.product.origin}",
                     style: AppTextStyles.bodySmall,
                   ),
                   const SizedBox(height: 15),
@@ -230,7 +212,7 @@ class _ProductCardState extends State<_ProductCard> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        widget.product['price'],
+                        widget.product.price,
                         style: AppTextStyles.price.copyWith(fontSize: 18, color: AppColors.primary),
                       ),
                       IconButton(

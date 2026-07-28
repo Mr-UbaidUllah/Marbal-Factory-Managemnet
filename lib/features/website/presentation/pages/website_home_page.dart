@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:factory_management/core/di/injection.dart';
+import 'package:factory_management/features/website/presentation/bloc/website_bloc.dart';
+import 'package:factory_management/features/website/presentation/bloc/website_event.dart';
 import 'package:factory_management/features/website/presentation/widgets/website_navbar.dart';
 import 'package:factory_management/features/website/presentation/widgets/website_hero.dart';
 import 'package:factory_management/features/website/presentation/widgets/category_section.dart';
@@ -43,22 +47,25 @@ class _WebsiteHomePageState extends State<WebsiteHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: WebsiteNavbar(isScrolled: _isScrolled),
-      body: SingleChildScrollView(
-        controller: _scrollController,
-        child: Column(
-          children: [
-            const WebsiteHero(),
-            const CategorySection(),
-            const WhyChooseUs(),
-            const FeaturedProducts(),
-            const ProjectShowcase(),
-            const TestimonialsSection(),
-            const QuoteFormSection(),
-            const WebsiteFooter(),
-          ],
+    return BlocProvider(
+      create: (context) => sl<WebsiteBloc>()..add(GetFeaturedProductsEvent()),
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        appBar: WebsiteNavbar(isScrolled: _isScrolled),
+        body: SingleChildScrollView(
+          controller: _scrollController,
+          child: Column(
+            children: [
+              const WebsiteHero(),
+              const CategorySection(),
+              const WhyChooseUs(),
+              const FeaturedProducts(),
+              const ProjectShowcase(),
+              const TestimonialsSection(),
+              const QuoteFormSection(),
+              const WebsiteFooter(),
+            ],
+          ),
         ),
       ),
     );
