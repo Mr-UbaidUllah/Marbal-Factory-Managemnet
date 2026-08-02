@@ -9,45 +9,70 @@ class AnalyticsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          flex: 2,
-          child: CustomCard(
-            height: 400,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Revenue Overview', style: AppTextStyles.h3),
-                    _buildChartFilters(),
-                  ],
-                ),
-                const SizedBox(height: 32),
-                Expanded(child: _buildRevenueChart()),
-              ],
-            ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isDesktop = constraints.maxWidth > 900;
+        
+        if (isDesktop) {
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 2,
+                child: _buildRevenueOverview(),
+              ),
+              const SizedBox(width: 24),
+              Expanded(
+                child: _buildProductDistribution(),
+              ),
+            ],
+          );
+        } else {
+          return Column(
+            children: [
+              _buildRevenueOverview(),
+              const SizedBox(height: 24),
+              _buildProductDistribution(),
+            ],
+          );
+        }
+      },
+    );
+  }
+
+  Widget _buildRevenueOverview() {
+    return CustomCard(
+      height: 400,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Revenue Overview', style: AppTextStyles.h3),
+              _buildChartFilters(),
+            ],
           ),
-        ),
-        const SizedBox(width: 24),
-        Expanded(
-          child: CustomCard(
-            height: 400,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Product Distribution', style: AppTextStyles.h3),
-                const SizedBox(height: 32),
-                Expanded(child: _buildDistributionChart()),
-                const SizedBox(height: 16),
-                _buildLegend(),
-              ],
-            ),
-          ),
-        ),
-      ],
+          const SizedBox(height: 32),
+          Expanded(child: _buildRevenueChart()),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProductDistribution() {
+    return CustomCard(
+      height: 400,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Product Distribution', style: AppTextStyles.h3),
+          const SizedBox(height: 32),
+          Expanded(child: _buildDistributionChart()),
+          const SizedBox(height: 16),
+          _buildLegend(),
+        ],
+      ),
     );
   }
 

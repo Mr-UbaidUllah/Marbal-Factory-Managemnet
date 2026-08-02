@@ -9,16 +9,23 @@ class CategorySection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final categories = [
-      {'name': 'Marble', 'image': 'https://images.unsplash.com/photo-1590273332324-214972f3f69b?q=80&w=1000&auto=format&fit=crop'},
+      {'name': 'Marble', 'image': 'https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?q=80&w=1000&auto=format&fit=crop'},
       {'name': 'Granite', 'image': 'https://images.unsplash.com/photo-1517483000871-1dbf64a6e1c6?q=80&w=1000&auto=format&fit=crop'},
       {'name': 'Onyx', 'image': 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1000&auto=format&fit=crop'},
       {'name': 'Quartz', 'image': 'https://images.unsplash.com/photo-1615529328331-f8917597711f?q=80&w=1000&auto=format&fit=crop'},
-      {'name': 'Travertine', 'image': 'https://images.unsplash.com/photo-1600585154526-990dcea4db0d?q=80&w=1000&auto=format&fit=crop'},
+      {'name': 'Travertine', 'image': 'https://images.unsplash.com/photo-1599619351208-3e6c839d7824?q=80&w=1000&auto=format&fit=crop'},
       {'name': 'Slabs', 'image': 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=1000&auto=format&fit=crop'},
     ];
 
+    final size = MediaQuery.of(context).size;
+    final isMobile = size.width < 768;
+    final isTablet = size.width >= 768 && size.width < 1024;
+
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 100, horizontal: 80),
+      padding: EdgeInsets.symmetric(
+        vertical: isMobile ? 60 : 100,
+        horizontal: isMobile ? 20 : 80,
+      ),
       color: Colors.white,
       child: Column(
         children: [
@@ -36,7 +43,11 @@ class CategorySection extends StatelessWidget {
                 const SizedBox(height: 15),
                 Text(
                   "Exquisite Stone Collections",
-                  style: AppTextStyles.h2.copyWith(fontSize: 42, fontWeight: FontWeight.w800),
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.h2.copyWith(
+                    fontSize: isMobile ? 32 : 42,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
                 const SizedBox(height: 60),
               ],
@@ -45,8 +56,8 @@ class CategorySection extends StatelessWidget {
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: isMobile ? 1 : (isTablet ? 2 : 3),
               crossAxisSpacing: 30,
               mainAxisSpacing: 30,
               childAspectRatio: 1.2,
@@ -108,7 +119,14 @@ class _CategoryCardState extends State<_CategoryCard> {
               AnimatedScale(
                 scale: isHovered ? 1.1 : 1.0,
                 duration: const Duration(milliseconds: 600),
-                child: Image.network(widget.image, fit: BoxFit.cover),
+                child: Image.network(
+                  widget.image,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    color: AppColors.primary.withOpacity(0.1),
+                    child: const Icon(Icons.image_not_supported, color: AppColors.primary),
+                  ),
+                ),
               ),
               Container(
                 decoration: BoxDecoration(

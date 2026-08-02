@@ -21,24 +21,28 @@ class DashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final bool showSidebar = screenWidth >= 1100;
+
     return BlocProvider(
       create: (context) => sl<DashboardBloc>()..add(GetDashboardStatsEvent()),
       child: Scaffold(
         backgroundColor: AppColors.background,
+        drawer: !showSidebar ? const Drawer(width: 260, child: Sidebar()) : null,
         body: Row(
           children: [
-            const Sidebar(),
+            if (showSidebar) const Sidebar(),
             Expanded(
               child: Column(
                 children: [
                   const TopAppBar(),
                   Expanded(
                     child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(32),
+                      padding: EdgeInsets.all(screenWidth < 600 ? 16 : 32),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildWelcomeSection(),
+                          _buildWelcomeSection(screenWidth),
                           const SizedBox(height: 32),
                           const StatisticsGrid(),
                           const SizedBox(height: 32),
@@ -46,63 +50,54 @@ class DashboardPage extends StatelessWidget {
                           const SizedBox(height: 32),
                           const TopSellingProducts(),
                           const SizedBox(height: 32),
-                          LayoutBuilder(
-                            builder: (context, constraints) {
-                              if (constraints.maxWidth < 1100) {
-                                return const Column(
-                                  children: [
-                                    RecentOrdersTable(),
-                                    SizedBox(height: 32),
-                                    RecentQuoteRequests(),
-                                    SizedBox(height: 32),
-                                    QuickInventory(),
-                                  ],
-                                );
-                              }
-                              return const Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(flex: 2, child: RecentOrdersTable()),
-                                  SizedBox(width: 32),
-                                  Expanded(
-                                    child: Column(
-                                      children: [
-                                        RecentQuoteRequests(),
-                                        SizedBox(height: 32),
-                                        QuickInventory(),
-                                      ],
-                                    ),
+                          
+                          // Responsive Orders & Quotes Section
+                          if (screenWidth < 1200) ...[
+                            const RecentOrdersTable(),
+                            const SizedBox(height: 32),
+                            const RecentQuoteRequests(),
+                            const SizedBox(height: 32),
+                            const QuickInventory(),
+                          ] else ...[
+                            const Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(flex: 2, child: RecentOrdersTable()),
+                                SizedBox(width: 32),
+                                Expanded(
+                                  child: Column(
+                                    children: [
+                                      RecentQuoteRequests(),
+                                      SizedBox(height: 32),
+                                      QuickInventory(),
+                                    ],
                                   ),
-                                ],
-                              );
-                            },
-                          ),
+                                ),
+                              ],
+                            ),
+                          ],
+                          
                           const SizedBox(height: 32),
-                          LayoutBuilder(
-                            builder: (context, constraints) {
-                              if (constraints.maxWidth < 1100) {
-                                return const Column(
-                                  children: [
-                                    LowStockAlerts(),
-                                    SizedBox(height: 32),
-                                    ActivityCalendar(),
-                                    SizedBox(height: 32),
-                                    RightSidebarWidgets(),
-                                  ],
-                                );
-                              }
-                              return const Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(child: LowStockAlerts()),
-                                  SizedBox(width: 32),
-                                  Expanded(child: ActivityCalendar()),
-                                  SizedBox(width: 32),
-                                  Expanded(child: RightSidebarWidgets()),
-                                ],
-                              );
-                            },
-                          ),
+                          
+                          // Responsive Alerts & Activity Section
+                          if (screenWidth < 1200) ...[
+                            const LowStockAlerts(),
+                            const SizedBox(height: 32),
+                            const ActivityCalendar(),
+                            const SizedBox(height: 32),
+                            const RightSidebarWidgets(),
+                          ] else ...[
+                            const Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(child: LowStockAlerts()),
+                                SizedBox(width: 32),
+                                Expanded(child: ActivityCalendar()),
+                                SizedBox(width: 32),
+                                Expanded(child: RightSidebarWidgets()),
+                              ],
+                            ),
+                          ],
                         ],
                       ),
                     ),
@@ -116,42 +111,42 @@ class DashboardPage extends StatelessWidget {
     );
   }
 
-  Widget _buildWelcomeSection() {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isMobile = constraints.maxWidth < 900;
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildWelcomeSection(double screenWidth) {
+    final isMobile = screenWidth < 900;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Welcome back, Admin', style: AppTextStyles.h1),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Thursday, 24 October 2024',
-                        style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
-                      ),
-                    ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Welcome back, Admin', 
+                    style: AppTextStyles.h1.copyWith(
+                      fontSize: screenWidth < 600 ? 24 : 32
+                    )
                   ),
-                ),
-                if (!isMobile) _buildQuickActions(),
-              ],
-            ),
-            if (isMobile) ...[
-              const SizedBox(height: 16),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: _buildQuickActions(),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Thursday, 24 October 2024',
+                    style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
+                  ),
+                ],
               ),
-            ],
+            ),
+            if (!isMobile) _buildQuickActions(),
           ],
-        );
-      },
+        ),
+        if (isMobile) ...[
+          const SizedBox(height: 20),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: _buildQuickActions(),
+          ),
+        ],
+      ],
     );
   }
 
@@ -159,7 +154,7 @@ class DashboardPage extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        _buildQuickAction('Add Product', Icons.add,),
+        _buildQuickAction('Add Product', Icons.add),
         const SizedBox(width: 12),
         _buildQuickAction('Add Category', Icons.category_outlined, isPrimary: false),
         const SizedBox(width: 12),
@@ -201,16 +196,21 @@ class RightSidebarWidgets extends StatelessWidget {
         ]),
         const SizedBox(height: 24),
         _buildWidgetCard('Weather', [
-          const Row(
+          Row(
             children: [
-              Icon(Icons.wb_sunny_outlined, color: AppColors.gold, size: 32),
-              SizedBox(width: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('32°C Sunny', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-                  Text('Sharjah Industrial Area', style: TextStyle(fontSize: 12, color: Colors.grey)),
-                ],
+              const Icon(Icons.wb_sunny_outlined, color: AppColors.gold, size: 32),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('32°C Sunny', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                    Text('Sharjah Industrial Area', 
+                      style: AppTextStyles.label.copyWith(fontSize: 12, color: AppColors.textSecondary),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -221,11 +221,12 @@ class RightSidebarWidgets extends StatelessWidget {
 
   Widget _buildWidgetCard(String title, List<Widget> children) {
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.border.withAlpha((0.5 * 255).toInt())),
+        border: Border.all(color: AppColors.border.withOpacity(0.5)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -242,8 +243,14 @@ class RightSidebarWidgets extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(width: 6, height: 6, decoration: const BoxDecoration(color: AppColors.primary, shape: BoxShape.circle)),
+          Container(
+            margin: const EdgeInsets.only(top: 6),
+            width: 6, 
+            height: 6, 
+            decoration: const BoxDecoration(color: AppColors.primary, shape: BoxShape.circle)
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(

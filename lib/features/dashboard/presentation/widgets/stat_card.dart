@@ -27,6 +27,7 @@ class StatCard extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min, // Allow card to shrink
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -34,17 +35,18 @@ class StatCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: iconColor.withValues(alpha: 0.1),
+                  color: iconColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(icon, color: iconColor, size: 24),
               ),
-              _buildTrendIndicator(),
+              Flexible(child: _buildTrendIndicator()),
             ],
           ),
           const SizedBox(height: 20),
           FittedBox(
             fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
             child: Text(value, style: AppTextStyles.h2.copyWith(fontSize: 28)),
           ),
           const SizedBox(height: 4),
@@ -62,7 +64,7 @@ class StatCard extends StatelessWidget {
               Icon(
                 Icons.show_chart,
                 size: 32,
-                color: AppColors.lightGray.withValues(alpha: 0.5),
+                color: AppColors.lightGray.withOpacity(0.5),
               ),
             ],
           ),
@@ -75,9 +77,7 @@ class StatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: (isPositive ? AppColors.success : AppColors.error).withValues(
-          alpha: 0.1,
-        ),
+        color: (isPositive ? AppColors.success : AppColors.error).withOpacity(0.1),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
@@ -109,14 +109,24 @@ class StatisticsGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final crossAxisCount = constraints.maxWidth < 1200 ? 2 : 4;
+        int crossAxisCount = 4;
+        double aspectRatio = 1.1;
+
+        if (constraints.maxWidth < 600) {
+          crossAxisCount = 1;
+          aspectRatio = 2.5;
+        } else if (constraints.maxWidth < 1200) {
+          crossAxisCount = 2;
+          aspectRatio = 1.4;
+        }
+
         return GridView.count(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           crossAxisCount: crossAxisCount,
           crossAxisSpacing: 24,
           mainAxisSpacing: 24,
-          childAspectRatio: 1.1, // Adjusted to prevent bottom overflow
+          childAspectRatio: aspectRatio,
           children: const [
             StatCard(
               title: 'Total Products',

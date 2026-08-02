@@ -27,7 +27,7 @@ class WebsiteNavbar extends StatelessWidget implements PreferredSizeWidget {
               ]
             : [],
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 60),
+      padding: const EdgeInsets.symmetric(horizontal: 20), // Reduced padding for better fit
       child: Row(
         children: [
           // Logo
@@ -45,50 +45,61 @@ class WebsiteNavbar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ),
           ),
-          const Spacer(),
-          // Nav Links
-          _NavLink(title: "Home", isScrolled: isScrolled, isActive: true, onTap: () => context.go(RoutePaths.home)),
-          _NavLink(title: "Products", isScrolled: isScrolled),
-          _NavLink(title: "Categories", isScrolled: isScrolled),
-          _NavLink(title: "Projects", isScrolled: isScrolled),
-          _NavLink(title: "Gallery", isScrolled: isScrolled),
-          _NavLink(title: "About Us", isScrolled: isScrolled),
-          _NavLink(title: "Contact", isScrolled: isScrolled),
-          
-          // Login / Dashboard Link
-          BlocBuilder<AuthBloc, AuthState>(
-            builder: (context, state) {
-              if (state is Authenticated) {
-                return _NavLink(
-                  title: "Dashboard",
-                  isScrolled: isScrolled,
-                  onTap: () => context.go(RoutePaths.dashboard),
-                );
-              }
-              return _NavLink(
-                title: "Login",
-                isScrolled: isScrolled,
-                onTap: () => context.go(RoutePaths.login),
-              );
-            },
+          const SizedBox(width: 20),
+          // Nav Links - Wrapped in Expanded and SingleChildScrollView to prevent overflow
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  _NavLink(title: "Home", isScrolled: isScrolled, isActive: true, onTap: () => context.go(RoutePaths.home)),
+                  _NavLink(title: "Products", isScrolled: isScrolled),
+                  _NavLink(title: "Categories", isScrolled: isScrolled),
+                  _NavLink(title: "Projects", isScrolled: isScrolled),
+                  _NavLink(title: "Gallery", isScrolled: isScrolled),
+                  _NavLink(title: "About Us", isScrolled: isScrolled),
+                  _NavLink(title: "Contact", isScrolled: isScrolled),
+                  
+                  // Login / Dashboard Link
+                  BlocBuilder<AuthBloc, AuthState>(
+                    builder: (context, state) {
+                      if (state is Authenticated) {
+                        return _NavLink(
+                          title: "Dashboard",
+                          isScrolled: isScrolled,
+                          onTap: () => context.go(RoutePaths.dashboard),
+                        );
+                      }
+                      return _NavLink(
+                        title: "Login",
+                        isScrolled: isScrolled,
+                        onTap: () => context.go(RoutePaths.login),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
           ),
           
-          const SizedBox(width: 40),
+          const SizedBox(width: 20),
           // Actions
           Icon(Icons.search, color: isScrolled ? AppColors.textPrimary : Colors.white),
-          const SizedBox(width: 20),
+          const SizedBox(width: 15),
           Icon(Icons.favorite_border, color: isScrolled ? AppColors.textPrimary : Colors.white),
-          const SizedBox(width: 30),
+          const SizedBox(width: 20),
           // Request Quote Button
-          ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.gold,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          Flexible(
+            child: ElevatedButton(
+              onPressed: () {},
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.gold,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              ),
+              child: const Text("Request a Quote", maxLines: 1, overflow: TextOverflow.ellipsis),
             ),
-            child: const Text("Request a Quote"),
           ),
         ],
       ),

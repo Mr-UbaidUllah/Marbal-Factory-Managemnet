@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:factory_management/core/router/route_paths.dart';
 import 'package:factory_management/core/theme/app_colors.dart';
 import 'package:factory_management/core/theme/app_text_styles.dart';
-import 'package:factory_management/core/utils/validators.dart';
-import 'package:factory_management/features/authentication/presentation/bloc/auth_bloc.dart';
-import 'package:factory_management/features/authentication/domain/entities/user_entity.dart';
+import 'package:factory_management/features/authentication/presentation/widgets/login_form.dart';
+import 'package:factory_management/features/authentication/presentation/widgets/login_hero.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -15,150 +11,140 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _isPasswordVisible = false;
+class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
+
+    _fadeAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeIn,
+    );
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0.05, 0),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutCubic,
+    ));
+
+    _controller.forward();
+  }
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
+    _controller.dispose();
     super.dispose();
-  }
-
-  void _onLoginPressed() {
-    if (_formKey.currentState!.validate()) {
-      context.read<AuthBloc>().add(
-            LoginRequested(
-              email: _emailController.text.trim(),
-              password: _passwordController.text,
-            ),
-          );
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthBloc, AuthState>(
-      listener: (context, state) {
-        if (state is Authenticated) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Login Successful'),
-              backgroundColor: AppColors.success,
-            ),
-          );
-          _navigateBasedOnRole(state.user.role);
-        } else if (state is AuthFailure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: AppColors.error,
-            ),
-          );
-        }
-      },
-      child: Scaffold(
-        body: Center(
-          child: Container(
-            constraints: const BoxConstraints(maxWidth: 450),
-            padding: const EdgeInsets.all(32),
-            child: Card(
-              child: Padding(
-                padding: const EdgeInsets.all(32),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(
-                        'Welcome Back',
-                        style: AppTextStyles.h2,
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Login to manage your factory operations',
-                        style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 32),
-                      TextFormField(
-                        controller: _emailController,
-                        decoration: const InputDecoration(
-                          labelText: 'Email Address',
-                          prefixIcon: Icon(Icons.email_outlined),
-                        ),
-                        keyboardType: TextInputType.emailAddress,
-                        validator: Validators.validateEmail,
-                      ),
-                      const SizedBox(height: 20),
-                      TextFormField(
-                        controller: _passwordController,
-                        decoration: InputDecoration(
-                          labelText: 'Password',
-                          prefixIcon: const Icon(Icons.lock_outlined),
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _isPasswordVisible = !_isPasswordVisible;
-                              });
-                            },
+    final size = MediaQuery.of(context).size;
+    final isDesktop = size.width >= 1024;
+    final isTablet = size.width >= 600 && size.width < 1024;
+
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: FadeTransition(
+        opacity: _fadeAnimation,
+        child: Column(
+          children: [
+            Expanded(
+              child: isDesktop
+                  ? Row(
+                      children: [
+                        const Expanded(flex: 11, child: LoginHero()),
+                        Expanded(
+                          flex: 9,
+                          child: SlideTransition(
+                            position: _slideAnimation,
+                            child: const LoginForm(),
                           ),
                         ),
-                        obscureText: !_isPasswordVisible,
-                        validator: Validators.validatePassword,
+                      ],
+                    )
+                  : SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: isTablet ? 400 : 300,
+                            width: double.infinity,
+                            child: const LoginHero(),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 40),
+                            child: SlideTransition(
+                              position: _slideAnimation,
+                              child: const LoginForm(),
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 32),
-                      BlocBuilder<AuthBloc, AuthState>(
-                        builder: (context, state) {
-                          return ElevatedButton(
-                            onPressed: state is AuthLoading ? null : _onLoginPressed,
-                            child: state is AuthLoading
-                                ? const SizedBox(
-                                    height: 20,
-                                    width: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: Colors.white,
-                                    ),
-                                  )
-                                : const Text('Login'),
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      TextButton(
-                        onPressed: () => context.go(RoutePaths.home),
-                        child: const Text('Back to Website'),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+                    ),
             ),
-          ),
+            const LoginFooter(),
+          ],
         ),
       ),
     );
   }
+}
 
-  void _navigateBasedOnRole(UserRole role) {
-    switch (role) {
-      case UserRole.owner:
-      case UserRole.admin:
-      case UserRole.staff:
-        context.go(RoutePaths.dashboard);
-        break;
-      case UserRole.customer:
-        context.go(RoutePaths.home);
-        break;
-    }
+class LoginFooter extends StatelessWidget {
+  const LoginFooter({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 40),
+      color: Colors.white,
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: 24,
+        runSpacing: 12,
+        children: [
+          Text(
+            '© ${DateTime.now().year} Alam Marble & Granite Factory. All rights reserved.',
+            style: AppTextStyles.bodySmall,
+          ),
+          _FooterLink(label: 'Privacy Policy', onTap: () {}),
+          _FooterLink(label: 'Terms of Service', onTap: () {}),
+          Text(
+            'Version 1.0.0',
+            style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FooterLink extends StatelessWidget {
+  final String label;
+  final VoidCallback onTap;
+
+  const _FooterLink({required this.label, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Text(
+        label,
+        style: AppTextStyles.bodySmall.copyWith(
+          decoration: TextDecoration.underline,
+        ),
+      ),
+    );
   }
 }

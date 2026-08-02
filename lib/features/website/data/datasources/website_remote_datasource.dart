@@ -14,11 +14,6 @@ class WebsiteRemoteDataSourceImpl implements WebsiteRemoteDataSource {
 
   @override
   Future<List<ProductModel>> getFeaturedProducts() async {
-    // In a real app, this would be:
-    // final response = await client.get(ApiEndpoints.getProducts);
-    // return (response.data as List).map((e) => ProductModel.fromJson(e)).toList();
-
-    // Mocking for now as per "preserve existing design" and "transform UI"
     await Future.delayed(const Duration(milliseconds: 500));
     return [
       const ProductModel(
@@ -30,26 +25,26 @@ class WebsiteRemoteDataSourceImpl implements WebsiteRemoteDataSource {
         rating: 5.0,
       ),
       const ProductModel(
-        name: 'Black Galaxy',
-        category: 'Granite',
-        origin: 'India',
-        image: 'https://images.unsplash.com/photo-1590273332324-214972f3f69b?q=80&w=1000&auto=format&fit=crop',
-        price: 'From \$120/sqm',
+        name: 'Nero Marquina',
+        category: 'Marble',
+        origin: 'Spain',
+        image: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=1000&auto=format&fit=crop',
+        price: 'From \$190/sqm',
         rating: 4.8,
       ),
       const ProductModel(
-        name: 'Royal White',
-        category: 'Quartz',
-        origin: 'Vietnam',
+        name: 'Carrara White',
+        category: 'Marble',
+        origin: 'Italy',
         image: 'https://images.unsplash.com/photo-1615529328331-f8917597711f?q=80&w=1000&auto=format&fit=crop',
         price: 'From \$180/sqm',
         rating: 4.9,
       ),
       const ProductModel(
-        name: 'Golden Spider',
-        category: 'Marble',
-        origin: 'Greece',
-        image: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=1000&auto=format&fit=crop',
+        name: 'Emerald Quartz',
+        category: 'Quartz',
+        origin: 'Brazil',
+        image: 'https://images.unsplash.com/photo-1599619351208-3e6c839d7824?q=80&w=1000&auto=format&fit=crop',
         price: 'From \$210/sqm',
         rating: 5.0,
       ),
@@ -58,7 +53,6 @@ class WebsiteRemoteDataSourceImpl implements WebsiteRemoteDataSource {
 
   @override
   Future<void> submitQuoteRequest(Map<String, dynamic> quoteData) async {
-    // await client.post(ApiEndpoints.submitQuote, data: quoteData);
     await Future.delayed(const Duration(seconds: 1));
   }
 }
