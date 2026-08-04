@@ -1,3 +1,5 @@
+import 'package:dartz/dartz.dart';
+import 'package:factory_management/core/errors/failures.dart';
 import 'package:factory_management/features/products/domain/entities/product.dart';
 import 'package:factory_management/features/products/domain/repositories/product_repository.dart';
 
@@ -6,7 +8,7 @@ class GetProductsUseCase {
 
   GetProductsUseCase(this.repository);
 
-  Future<List<Product>> call({
+  Future<Either<Failure, List<Product>>> call({
     String? categoryId,
     String? searchQuery,
     String? sortBy,

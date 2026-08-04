@@ -1,3 +1,6 @@
+import 'package:dartz/dartz.dart';
+import 'package:factory_management/core/errors/exception_mapper.dart';
+import 'package:factory_management/core/errors/failures.dart';
 import 'package:factory_management/features/products/data/models/product_model.dart';
 import 'package:factory_management/features/products/domain/entities/product.dart';
 import 'package:factory_management/features/products/domain/repositories/product_repository.dart';
@@ -7,7 +10,7 @@ class ProductRepositoryImpl implements ProductRepository {
   final List<ProductModel> _mockProducts = [
     ProductModel(
       id: '1',
-      name: 'Carrara White Marble',
+      name: 'White Marble',
       description: 'Classic white marble with grey veining, perfect for countertops and flooring.',
       price: 150.0,
       images: ['https://example.com/carrara.jpg'],
@@ -38,7 +41,7 @@ class ProductRepositoryImpl implements ProductRepository {
   ];
 
   @override
-  Future<List<Product>> getProducts({
+  Future<Either<Failure, List<Product>>> getProducts({
     String? categoryId,
     String? searchQuery,
     String? sortBy,
@@ -46,37 +49,53 @@ class ProductRepositoryImpl implements ProductRepository {
     int page = 1,
     int limit = 20,
   }) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    
-    var results = _mockProducts.where((product) {
-      bool matchesCategory = categoryId == null || product.categoryId == categoryId;
-      bool matchesSearch = searchQuery == null || 
-          product.name.toLowerCase().contains(searchQuery.toLowerCase()) ||
-          product.material.toLowerCase().contains(searchQuery.toLowerCase());
-      return matchesCategory && matchesSearch;
-    }).toList();
+    try {
+      await Future.delayed(const Duration(milliseconds: 500));
+      
+      var results = _mockProducts.where((product) {
+        bool matchesCategory = categoryId == null || product.categoryId == categoryId;
+        bool matchesSearch = searchQuery == null || 
+            product.name.toLowerCase().contains(searchQuery.toLowerCase()) ||
+            product.material.toLowerCase().contains(searchQuery.toLowerCase());
+        return matchesCategory && matchesSearch;
+      }).toList();
 
-    // Sorting and pagination logic would go here
-    
-    return results;
+      return Right(results);
+    } catch (e) {
+      return Left(ExceptionMapper.map(e));
+    }
   }
 
   @override
-  Future<Product> getProductById(String id) async {
-    await Future.delayed(const Duration(milliseconds: 300));
-    return _mockProducts.firstWhere((p) => p.id == id);
+  Future<Either<Failure, Product>> getProductById(String id) async {
+    try {
+      await Future.delayed(const Duration(milliseconds: 300));
+      final product = _mockProducts.firstWhere((p) => p.id == id);
+      return Right(product);
+    } catch (e) {
+      return Left(ExceptionMapper.map(e));
+    }
   }
 
   @override
-  Future<List<Product>> getRelatedProducts(String productId) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    final product = _mockProducts.firstWhere((p) => p.id == productId);
-    return _mockProducts.where((p) => p.categoryId == product.categoryId && p.id != productId).toList();
+  Future<Either<Failure, List<Product>>> getRelatedProducts(String productId) async {
+    try {
+      await Future.delayed(const Duration(milliseconds: 500));
+      final product = _mockProducts.firstWhere((p) => p.id == productId);
+      final related = _mockProducts.where((p) => p.categoryId == product.categoryId && p.id != productId).toList();
+      return Right(related);
+    } catch (e) {
+      return Left(ExceptionMapper.map(e));
+    }
   }
 
   @override
-  Future<List<Product>> getFeaturedProducts() async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    return _mockProducts.take(4).toList();
+  Future<Either<Failure, List<Product>>> getFeaturedProducts() async {
+    try {
+      await Future.delayed(const Duration(milliseconds: 500));
+      return Right(_mockProducts.take(4).toList());
+    } catch (e) {
+      return Left(ExceptionMapper.map(e));
+    }
   }
 }

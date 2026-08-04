@@ -5,8 +5,8 @@ import 'package:factory_management/core/network/api_client.dart';
 import 'package:factory_management/core/network/network_interceptor.dart';
 
 // Auth
-import 'package:factory_management/features/authentication/data/datasource/auth_local_data_source.dart';
-import 'package:factory_management/features/authentication/data/datasource/auth_remote_data_source.dart';
+import 'package:factory_management/features/authentication/data/datasources/auth_local_datasource.dart';
+import 'package:factory_management/features/authentication/data/datasources/auth_remote_datasource.dart';
 import 'package:factory_management/features/authentication/data/repositories/auth_repository_impl.dart';
 import 'package:factory_management/features/authentication/domain/repositories/auth_repository.dart';
 import 'package:factory_management/features/authentication/domain/usecases/login_usecase.dart';

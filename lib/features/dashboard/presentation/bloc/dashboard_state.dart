@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:factory_management/core/errors/failures.dart';
 import 'package:factory_management/features/dashboard/domain/entities/dashboard_stats.dart';
 
 enum DashboardStatus { initial, loading, success, failure }
@@ -6,26 +7,26 @@ enum DashboardStatus { initial, loading, success, failure }
 class DashboardState extends Equatable {
   final DashboardStatus status;
   final DashboardStats? stats;
-  final String? errorMessage;
+  final Failure? failure;
 
   const DashboardState({
     this.status = DashboardStatus.initial,
     this.stats,
-    this.errorMessage,
+    this.failure,
   });
 
   DashboardState copyWith({
     DashboardStatus? status,
     DashboardStats? stats,
-    String? errorMessage,
+    Failure? failure,
   }) {
     return DashboardState(
       status: status ?? this.status,
       stats: stats ?? this.stats,
-      errorMessage: errorMessage ?? this.errorMessage,
+      failure: failure ?? this.failure,
     );
   }
 
   @override
-  List<Object?> get props => [status, stats, errorMessage];
+  List<Object?> get props => [status, stats, failure];
 }

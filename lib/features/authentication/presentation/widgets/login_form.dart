@@ -44,7 +44,7 @@ class _LoginFormState extends State<LoginForm> {
         if (state is AuthFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Text(state.failure.message),
               backgroundColor: AppColors.error,
               behavior: SnackBarBehavior.floating,
               margin: const EdgeInsets.all(20),

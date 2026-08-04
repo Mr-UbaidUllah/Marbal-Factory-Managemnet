@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
-import 'package:factory_management/core/errors/exceptions.dart';
+import 'package:factory_management/core/errors/exception_mapper.dart';
 import 'package:factory_management/core/errors/failures.dart';
-import 'package:factory_management/features/authentication/data/datasource/auth_local_data_source.dart';
-import 'package:factory_management/features/authentication/data/datasource/auth_remote_data_source.dart';
+import 'package:factory_management/features/authentication/data/datasources/auth_local_datasource.dart';
+import 'package:factory_management/features/authentication/data/datasources/auth_remote_datasource.dart';
 import 'package:factory_management/features/authentication/data/models/user_model.dart';
 import 'package:factory_management/features/authentication/domain/entities/user_entity.dart';
 import 'package:factory_management/features/authentication/domain/repositories/auth_repository.dart';
@@ -25,10 +25,8 @@ class AuthRepositoryImpl implements AuthRepository {
       final userModel = await remoteDataSource.login(email, password);
       await localDataSource.saveUser(userModel);
       return Right(userModel);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message));
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ExceptionMapper.map(e));
     }
   }
 
@@ -38,7 +36,7 @@ class AuthRepositoryImpl implements AuthRepository {
       await localDataSource.clearUser();
       return const Right(null);
     } catch (e) {
-      return Left(CacheFailure(e.toString()));
+      return Left(ExceptionMapper.map(e));
     }
   }
 
@@ -48,7 +46,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final user = await localDataSource.getUser();
       return Right(user);
     } catch (e) {
-      return Left(CacheFailure(e.toString()));
+      return Left(ExceptionMapper.map(e));
     }
   }
 
@@ -58,7 +56,7 @@ class AuthRepositoryImpl implements AuthRepository {
       await localDataSource.saveUser(UserModel.fromEntity(user));
       return const Right(null);
     } catch (e) {
-      return Left(CacheFailure(e.toString()));
+      return Left(ExceptionMapper.map(e));
     }
   }
 
@@ -68,7 +66,7 @@ class AuthRepositoryImpl implements AuthRepository {
       await localDataSource.clearUser();
       return const Right(null);
     } catch (e) {
-      return Left(CacheFailure(e.toString()));
+      return Left(ExceptionMapper.map(e));
     }
   }
 
@@ -78,7 +76,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final isValid = await localDataSource.hasToken();
       return Right(isValid);
     } catch (e) {
-      return Left(CacheFailure(e.toString()));
+      return Left(ExceptionMapper.map(e));
     }
   }
 }

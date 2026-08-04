@@ -21,7 +21,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     result.fold(
       (failure) => emit(state.copyWith(
         status: DashboardStatus.failure,
-        errorMessage: failure.message,
+        failure: failure,
       )),
       (stats) => emit(state.copyWith(
         status: DashboardStatus.success,

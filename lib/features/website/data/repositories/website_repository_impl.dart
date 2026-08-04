@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:factory_management/core/errors/exception_mapper.dart';
 import 'package:factory_management/core/errors/failures.dart';
 import 'package:factory_management/features/website/data/datasources/website_remote_datasource.dart';
 import 'package:factory_management/features/website/domain/entities/product.dart';
@@ -15,7 +16,7 @@ class WebsiteRepositoryImpl implements WebsiteRepository {
       final products = await remoteDataSource.getFeaturedProducts();
       return Right(products);
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ExceptionMapper.map(e));
     }
   }
 
@@ -23,9 +24,9 @@ class WebsiteRepositoryImpl implements WebsiteRepository {
   Future<Either<Failure, void>> submitQuoteRequest(Map<String, dynamic> quoteData) async {
     try {
       await remoteDataSource.submitQuoteRequest(quoteData);
-      return Right(null);
+      return const Right(null);
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ExceptionMapper.map(e));
     }
   }
 }

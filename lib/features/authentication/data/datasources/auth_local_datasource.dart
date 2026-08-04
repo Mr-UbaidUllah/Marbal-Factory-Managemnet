@@ -3,29 +3,30 @@ import 'package:factory_management/features/authentication/data/models/user_mode
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class AuthLocalDataSource {
-  Future<void> cacheUser(UserModel user);
-  Future<UserModel?> getCachedUser();
-  Future<void> clearCache();
+  Future<void> saveUser(UserModel user);
+  Future<UserModel?> getUser();
+  Future<void> clearUser();
   Future<bool> hasToken();
 }
 
 class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   final SharedPreferences sharedPreferences;
-  static const String _cachedUserKey = 'CACHED_USER';
+  static const String _userKey = 'cached_user';
 
   AuthLocalDataSourceImpl({required this.sharedPreferences});
 
   @override
-  Future<void> cacheUser(UserModel user) async {
-    await sharedPreferences.setString(_cachedUserKey, jsonEncode(user.toJson()));
+  Future<void> saveUser(UserModel user) async {
+    final userJson = jsonEncode(user.toJson());
+    await sharedPreferences.setString(_userKey, userJson);
   }
 
   @override
-  Future<UserModel?> getCachedUser() async {
-    final jsonString = sharedPreferences.getString(_cachedUserKey);
-    if (jsonString != null) {
+  Future<UserModel?> getUser() async {
+    final userJson = sharedPreferences.getString(_userKey);
+    if (userJson != null) {
       try {
-        return UserModel.fromJson(jsonDecode(jsonString));
+        return UserModel.fromJson(jsonDecode(userJson));
       } catch (_) {
         return null;
       }
@@ -34,13 +35,13 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   }
 
   @override
-  Future<void> clearCache() async {
-    await sharedPreferences.remove(_cachedUserKey);
+  Future<void> clearUser() async {
+    await sharedPreferences.remove(_userKey);
   }
 
   @override
   Future<bool> hasToken() async {
-    final user = await getCachedUser();
+    final user = await getUser();
     return user?.token != null && user!.token.isNotEmpty;
   }
 }

@@ -1,7 +1,9 @@
+import 'package:dartz/dartz.dart';
+import 'package:factory_management/core/errors/failures.dart';
 import 'package:factory_management/features/products/domain/entities/product.dart';
 
 abstract class ProductRepository {
-  Future<List<Product>> getProducts({
+  Future<Either<Failure, List<Product>>> getProducts({
     String? categoryId,
     String? searchQuery,
     String? sortBy,
@@ -10,7 +12,7 @@ abstract class ProductRepository {
     int limit = 20,
   });
 
-  Future<Product> getProductById(String id);
-  Future<List<Product>> getRelatedProducts(String productId);
-  Future<List<Product>> getFeaturedProducts();
+  Future<Either<Failure, Product>> getProductById(String id);
+  Future<Either<Failure, List<Product>>> getRelatedProducts(String productId);
+  Future<Either<Failure, List<Product>>> getFeaturedProducts();
 }

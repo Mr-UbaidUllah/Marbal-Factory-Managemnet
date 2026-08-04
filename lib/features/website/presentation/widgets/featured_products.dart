@@ -66,7 +66,7 @@ class FeaturedProducts extends StatelessWidget {
                 return const Center(child: CircularProgressIndicator());
               }
               if (state.status == WebsiteStatus.failure) {
-                return Center(child: Text(state.errorMessage ?? 'Error loading products'));
+                return Center(child: Text(state.failure?.message ?? 'Error loading products'));
               }
               
               final products = state.featuredProducts;

@@ -57,16 +57,16 @@ class _QuoteFormSectionState extends State<QuoteFormSection> {
     return BlocListener<WebsiteBloc, WebsiteState>(
       listenWhen: (previous, current) =>
           previous.isQuoteSuccess != current.isQuoteSuccess ||
-          previous.errorMessage != current.errorMessage,
+          previous.failure?.message != current.failure?.message,
       listener: (context, state) {
         if (state.isQuoteSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Quote request submitted successfully!')),
           );
           _formKey.currentState!.reset();
-        } else if (state.errorMessage != null && !state.isQuoteSubmitting) {
+        } else if (state.failure?.message != null && !state.isQuoteSubmitting) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.errorMessage!)),
+            SnackBar(content: Text(state.failure!.message)),
           );
         }
       },

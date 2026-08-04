@@ -25,7 +25,7 @@ class WebsiteBloc extends Bloc<WebsiteEvent, WebsiteState> {
     result.fold(
       (failure) => emit(state.copyWith(
         status: WebsiteStatus.failure,
-        errorMessage: failure.message,
+        failure: failure,
       )),
       (products) => emit(state.copyWith(
         status: WebsiteStatus.success,
@@ -43,7 +43,7 @@ class WebsiteBloc extends Bloc<WebsiteEvent, WebsiteState> {
     result.fold(
       (failure) => emit(state.copyWith(
         isQuoteSubmitting: false,
-        errorMessage: failure.message,
+        failure: failure,
       )),
       (_) => emit(state.copyWith(
         isQuoteSubmitting: false,

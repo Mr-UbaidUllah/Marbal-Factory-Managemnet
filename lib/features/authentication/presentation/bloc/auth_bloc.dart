@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:factory_management/core/errors/failures.dart';
 import 'package:factory_management/features/authentication/domain/entities/user_entity.dart';
 import 'package:factory_management/features/authentication/domain/usecases/get_current_user_usecase.dart';
 import 'package:factory_management/features/authentication/domain/usecases/login_usecase.dart';
@@ -45,7 +46,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       password: event.password,
     );
     result.fold(
-      (failure) => emit(AuthFailure(failure.message)),
+      (failure) => emit(AuthFailure(failure)),
       (user) => emit(Authenticated(user)),
     );
   }
@@ -55,7 +56,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     final result = await logoutUseCase();
     result.fold(
-      (failure) => emit(AuthFailure(failure.message)),
+      (failure) => emit(AuthFailure(failure)),
       (_) => emit(Unauthenticated()),
     );
   }
