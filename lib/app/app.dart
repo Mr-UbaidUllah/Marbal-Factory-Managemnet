@@ -5,6 +5,7 @@ import 'package:factory_management/core/theme/app_theme.dart';
 import 'package:factory_management/core/router/app_router.dart';
 import 'package:factory_management/core/di/injection.dart';
 import 'package:factory_management/features/authentication/presentation/bloc/auth_bloc.dart';
+import 'package:factory_management/features/dashboard/presentation/bloc/navigation_bloc.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -15,6 +16,9 @@ class App extends StatelessWidget {
       providers: [
         BlocProvider<AuthBloc>(
           create: (context) => sl<AuthBloc>(),
+        ),
+        BlocProvider<NavigationBloc>(
+          create: (context) => sl<NavigationBloc>(),
         ),
       ],
       child: ScreenUtilInit(

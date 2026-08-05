@@ -29,6 +29,20 @@ import 'package:factory_management/features/dashboard/data/repositories/dashboar
 import 'package:factory_management/features/dashboard/domain/repositories/dashboard_repository.dart';
 import 'package:factory_management/features/dashboard/domain/usecases/get_dashboard_stats_usecase.dart';
 import 'package:factory_management/features/dashboard/presentation/bloc/dashboard_bloc.dart';
+import 'package:factory_management/features/dashboard/presentation/bloc/navigation_bloc.dart';
+
+// Products
+import 'package:factory_management/features/products/data/datasources/product_remote_datasource.dart';
+import 'package:factory_management/features/products/data/repositories/product_repository_impl.dart';
+import 'package:factory_management/features/products/domain/repositories/product_repository.dart';
+import 'package:factory_management/features/products/domain/usecases/get_products.dart';
+import 'package:factory_management/features/products/domain/usecases/get_product.dart';
+import 'package:factory_management/features/products/domain/usecases/create_product.dart';
+import 'package:factory_management/features/products/domain/usecases/update_product.dart';
+import 'package:factory_management/features/products/domain/usecases/delete_product.dart';
+import 'package:factory_management/features/products/domain/usecases/bulk_delete_products.dart';
+import 'package:factory_management/features/products/domain/usecases/bulk_update_status.dart';
+import 'package:factory_management/features/products/presentation/bloc/product_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -41,6 +55,9 @@ Future<void> init() async {
   dio.interceptors.add(NetworkInterceptor());
   sl.registerLazySingleton<Dio>(() => dio);
   sl.registerLazySingleton<ApiClient>(() => ApiClient(sl<Dio>()));
+
+  // Features - Navigation (Global)
+  sl.registerLazySingleton<NavigationBloc>(() => NavigationBloc());
 
   // Features - Authentication
   sl.registerLazySingleton<AuthBloc>(() => AuthBloc(
@@ -97,5 +114,30 @@ Future<void> init() async {
   
   sl.registerLazySingleton<DashboardRemoteDataSource>(
     () => DashboardRemoteDataSourceImpl(client: sl<ApiClient>()),
+  );
+
+  // Features - Products
+  sl.registerFactory<ProductBloc>(() => ProductBloc(
+        getProducts: sl<GetProducts>(),
+        getProduct: sl<GetProduct>(),
+        createProduct: sl<CreateProduct>(),
+        updateProduct: sl<UpdateProduct>(),
+        deleteProduct: sl<DeleteProduct>(),
+        repository: sl<ProductRepository>(),
+      ));
+  sl.registerLazySingleton<GetProducts>(() => GetProducts(sl<ProductRepository>()));
+  sl.registerLazySingleton<GetProduct>(() => GetProduct(sl<ProductRepository>()));
+  sl.registerLazySingleton<CreateProduct>(() => CreateProduct(sl<ProductRepository>()));
+  sl.registerLazySingleton<UpdateProduct>(() => UpdateProduct(sl<ProductRepository>()));
+  sl.registerLazySingleton<DeleteProduct>(() => DeleteProduct(sl<ProductRepository>()));
+  sl.registerLazySingleton<BulkDeleteProducts>(() => BulkDeleteProducts(sl<ProductRepository>()));
+  sl.registerLazySingleton<BulkUpdateStatus>(() => BulkUpdateStatus(sl<ProductRepository>()));
+  
+  sl.registerLazySingleton<ProductRepository>(
+    () => ProductRepositoryImpl(remoteDataSource: sl<ProductRemoteDataSource>()),
+  );
+  
+  sl.registerLazySingleton<ProductRemoteDataSource>(
+    () => ProductRemoteDataSourceImpl(),
   );
 }

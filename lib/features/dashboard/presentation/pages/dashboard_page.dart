@@ -5,8 +5,6 @@ import 'package:factory_management/core/theme/app_colors.dart';
 import 'package:factory_management/core/theme/app_text_styles.dart';
 import 'package:factory_management/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:factory_management/features/dashboard/presentation/bloc/dashboard_event.dart';
-import 'package:factory_management/features/dashboard/presentation/widgets/sidebar.dart';
-import 'package:factory_management/features/dashboard/presentation/widgets/top_app_bar.dart';
 import 'package:factory_management/features/dashboard/presentation/widgets/stat_card.dart';
 import 'package:factory_management/features/dashboard/presentation/widgets/analytics_section.dart';
 import 'package:factory_management/features/dashboard/presentation/widgets/recent_orders_table.dart';
@@ -15,6 +13,7 @@ import 'package:factory_management/features/dashboard/presentation/widgets/low_s
 import 'package:factory_management/features/dashboard/presentation/widgets/recent_quote_requests.dart';
 import 'package:factory_management/features/dashboard/presentation/widgets/quick_inventory.dart';
 import 'package:factory_management/features/dashboard/presentation/widgets/activity_calendar.dart';
+import 'package:go_router/go_router.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -22,96 +21,77 @@ class DashboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final bool showSidebar = screenWidth >= 1100;
 
     return BlocProvider(
       create: (context) => sl<DashboardBloc>()..add(GetDashboardStatsEvent()),
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        drawer: !showSidebar ? const Drawer(width: 260, child: Sidebar()) : null,
-        body: Row(
+      child: SingleChildScrollView(
+        padding: EdgeInsets.all(screenWidth < 600 ? 16 : 32),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (showSidebar) const Sidebar(),
-            Expanded(
-              child: Column(
+            _buildWelcomeSection(context, screenWidth),
+            const SizedBox(height: 32),
+            const StatisticsGrid(),
+            const SizedBox(height: 32),
+            const AnalyticsSection(),
+            const SizedBox(height: 32),
+            const TopSellingProducts(),
+            const SizedBox(height: 32),
+            
+            // Responsive Orders & Quotes Section
+            if (screenWidth < 1200) ...[
+              const RecentOrdersTable(),
+              const SizedBox(height: 32),
+              const RecentQuoteRequests(),
+              const SizedBox(height: 32),
+              const QuickInventory(),
+            ] else ...[
+              const Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const TopAppBar(),
+                  Expanded(flex: 2, child: RecentOrdersTable()),
+                  SizedBox(width: 32),
                   Expanded(
-                    child: SingleChildScrollView(
-                      padding: EdgeInsets.all(screenWidth < 600 ? 16 : 32),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildWelcomeSection(screenWidth),
-                          const SizedBox(height: 32),
-                          const StatisticsGrid(),
-                          const SizedBox(height: 32),
-                          const AnalyticsSection(),
-                          const SizedBox(height: 32),
-                          const TopSellingProducts(),
-                          const SizedBox(height: 32),
-                          
-                          // Responsive Orders & Quotes Section
-                          if (screenWidth < 1200) ...[
-                            const RecentOrdersTable(),
-                            const SizedBox(height: 32),
-                            const RecentQuoteRequests(),
-                            const SizedBox(height: 32),
-                            const QuickInventory(),
-                          ] else ...[
-                            const Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(flex: 2, child: RecentOrdersTable()),
-                                SizedBox(width: 32),
-                                Expanded(
-                                  child: Column(
-                                    children: [
-                                      RecentQuoteRequests(),
-                                      SizedBox(height: 32),
-                                      QuickInventory(),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                          
-                          const SizedBox(height: 32),
-                          
-                          // Responsive Alerts & Activity Section
-                          if (screenWidth < 1200) ...[
-                            const LowStockAlerts(),
-                            const SizedBox(height: 32),
-                            const ActivityCalendar(),
-                            const SizedBox(height: 32),
-                            const RightSidebarWidgets(),
-                          ] else ...[
-                            const Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(child: LowStockAlerts()),
-                                SizedBox(width: 32),
-                                Expanded(child: ActivityCalendar()),
-                                SizedBox(width: 32),
-                                Expanded(child: RightSidebarWidgets()),
-                              ],
-                            ),
-                          ],
-                        ],
-                      ),
+                    child: Column(
+                      children: [
+                        RecentQuoteRequests(),
+                        SizedBox(height: 32),
+                        QuickInventory(),
+                      ],
                     ),
                   ),
                 ],
               ),
-            ),
+            ],
+            
+            const SizedBox(height: 32),
+            
+            // Responsive Alerts & Activity Section
+            if (screenWidth < 1200) ...[
+              const LowStockAlerts(),
+              const SizedBox(height: 32),
+              const ActivityCalendar(),
+              const SizedBox(height: 32),
+              const RightSidebarWidgets(),
+            ] else ...[
+              const Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(child: LowStockAlerts()),
+                  SizedBox(width: 32),
+                  Expanded(child: ActivityCalendar()),
+                  SizedBox(width: 32),
+                  Expanded(child: RightSidebarWidgets()),
+                ],
+              ),
+            ],
           ],
         ),
       ),
     );
   }
 
-  Widget _buildWelcomeSection(double screenWidth) {
+  Widget _buildWelcomeSection(BuildContext context, double screenWidth) {
     final isMobile = screenWidth < 900;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -136,36 +116,36 @@ class DashboardPage extends StatelessWidget {
                 ],
               ),
             ),
-            if (!isMobile) _buildQuickActions(),
+            if (!isMobile) _buildQuickActions(context),
           ],
         ),
         if (isMobile) ...[
           const SizedBox(height: 20),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            child: _buildQuickActions(),
+            child: _buildQuickActions(context),
           ),
         ],
       ],
     );
   }
 
-  Widget _buildQuickActions() {
+  Widget _buildQuickActions(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        _buildQuickAction('Add Product', Icons.add),
+        _buildQuickAction(context, 'Add Product', Icons.add, onPressed: () => context.push('/dashboard/products/add')),
         const SizedBox(width: 12),
-        _buildQuickAction('Add Category', Icons.category_outlined, isPrimary: false),
+        _buildQuickAction(context, 'Add Category', Icons.category_outlined, isPrimary: false, onPressed: () => context.push('/dashboard/categories')),
         const SizedBox(width: 12),
-        _buildQuickAction('Create Quote', Icons.request_quote_outlined, isPrimary: false),
+        _buildQuickAction(context, 'Create Quote', Icons.request_quote_outlined, isPrimary: false, onPressed: () => context.push('/dashboard/quotations')),
       ],
     );
   }
 
-  Widget _buildQuickAction(String label, IconData icon, {bool isPrimary = true}) {
+  Widget _buildQuickAction(BuildContext context, String label, IconData icon, {bool isPrimary = true, VoidCallback? onPressed}) {
     return ElevatedButton.icon(
-      onPressed: () {},
+      onPressed: onPressed,
       icon: Icon(icon, size: 18, color: isPrimary ? Colors.white : AppColors.primary),
       label: Text(label),
       style: ElevatedButton.styleFrom(

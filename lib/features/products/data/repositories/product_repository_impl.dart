@@ -1,99 +1,126 @@
 import 'package:dartz/dartz.dart';
 import 'package:factory_management/core/errors/exception_mapper.dart';
-import 'package:factory_management/core/errors/failures.dart';
+import 'package:factory_management/features/products/data/datasources/product_remote_datasource.dart';
 import 'package:factory_management/features/products/data/models/product_model.dart';
 import 'package:factory_management/features/products/domain/entities/product.dart';
 import 'package:factory_management/features/products/domain/repositories/product_repository.dart';
 
+import '../../../../core/errors/failures.dart';
+
 class ProductRepositoryImpl implements ProductRepository {
-  // Mock data for initial implementation
-  final List<ProductModel> _mockProducts = [
-    ProductModel(
-      id: '1',
-      name: 'White Marble',
-      description: 'Classic white marble with grey veining, perfect for countertops and flooring.',
-      price: 150.0,
-      images: ['https://example.com/carrara.jpg'],
-      categoryId: '1',
-      categoryName: 'Marble',
-      material: 'Marble',
-      origin: 'Italy',
-      color: 'White',
-      finish: 'Polished',
-      isAvailable: true,
-      stockQuantity: 500.0,
-    ),
-    ProductModel(
-      id: '2',
-      name: 'Black Galaxy Granite',
-      description: 'Stunning black granite with golden specks, highly durable for kitchen use.',
-      price: 120.0,
-      images: ['https://example.com/black_galaxy.jpg'],
-      categoryId: '2',
-      categoryName: 'Granite',
-      material: 'Granite',
-      origin: 'India',
-      color: 'Black',
-      finish: 'Polished',
-      isAvailable: true,
-      stockQuantity: 300.0,
-    ),
-  ];
+  final ProductRemoteDataSource remoteDataSource;
+
+  ProductRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<Either<Failure, List<Product>>> getProducts({
+  Future<Either<Failure, PaginatedProducts>> getProducts({
+    String? query,
     String? categoryId,
-    String? searchQuery,
+    String? materialType,
+    String? finish,
+    String? color,
+    String? originCountry,
+    bool? featured,
+    bool? active,
     String? sortBy,
-    bool descending = false,
-    int page = 1,
-    int limit = 20,
+    bool? descending,
+    int? page,
+    int? limit,
   }) async {
     try {
-      await Future.delayed(const Duration(milliseconds: 500));
+      final result = await remoteDataSource.getProducts(
+        query: query,
+        categoryId: categoryId,
+        materialType: materialType,
+        finish: finish,
+        color: color,
+        originCountry: originCountry,
+        featured: featured,
+        active: active,
+        sortBy: sortBy,
+        descending: descending,
+        page: page,
+        limit: limit,
+      );
       
-      var results = _mockProducts.where((product) {
-        bool matchesCategory = categoryId == null || product.categoryId == categoryId;
-        bool matchesSearch = searchQuery == null || 
-            product.name.toLowerCase().contains(searchQuery.toLowerCase()) ||
-            product.material.toLowerCase().contains(searchQuery.toLowerCase());
-        return matchesCategory && matchesSearch;
-      }).toList();
-
-      return Right(results);
+      return Right(PaginatedProducts(
+        products: (result['products'] as List).cast<Product>(),
+        total: result['total'] as int,
+        page: result['page'] as int,
+        limit: result['limit'] as int,
+      ));
     } catch (e) {
       return Left(ExceptionMapper.map(e));
     }
   }
 
   @override
-  Future<Either<Failure, Product>> getProductById(String id) async {
+  Future<Either<Failure, Product>> getProduct(String id) async {
     try {
-      await Future.delayed(const Duration(milliseconds: 300));
-      final product = _mockProducts.firstWhere((p) => p.id == id);
-      return Right(product);
+      final remoteProduct = await remoteDataSource.getProduct(id);
+      return Right(remoteProduct);
     } catch (e) {
       return Left(ExceptionMapper.map(e));
     }
   }
 
   @override
-  Future<Either<Failure, List<Product>>> getRelatedProducts(String productId) async {
+  Future<Either<Failure, Product>> createProduct(Product product) async {
     try {
-      await Future.delayed(const Duration(milliseconds: 500));
-      final product = _mockProducts.firstWhere((p) => p.id == productId);
-      final related = _mockProducts.where((p) => p.categoryId == product.categoryId && p.id != productId).toList();
-      return Right(related);
+      final productModel = ProductModel.fromEntity(product);
+      final createdProduct = await remoteDataSource.createProduct(productModel);
+      return Right(createdProduct);
     } catch (e) {
       return Left(ExceptionMapper.map(e));
     }
   }
 
   @override
-  Future<Either<Failure, List<Product>>> getFeaturedProducts() async {
+  Future<Either<Failure, Product>> updateProduct(Product product) async {
     try {
-      await Future.delayed(const Duration(milliseconds: 500));
-      return Right(_mockProducts.take(4).toList());
+      final productModel = ProductModel.fromEntity(product);
+      final updatedProduct = await remoteDataSource.updateProduct(productModel);
+      return Right(updatedProduct);
+    } catch (e) {
+      return Left(ExceptionMapper.map(e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> deleteProduct(String id) async {
+    try {
+      final result = await remoteDataSource.deleteProduct(id);
+      return Right(result);
+    } catch (e) {
+      return Left(ExceptionMapper.map(e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> bulkDeleteProducts(List<String> ids) async {
+    try {
+      final result = await remoteDataSource.bulkDeleteProducts(ids);
+      return Right(result);
+    } catch (e) {
+      return Left(ExceptionMapper.map(e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> bulkUpdateStatus(List<String> ids, {bool? active, bool? featured}) async {
+    try {
+      final result = await remoteDataSource.bulkUpdateStatus(ids, active: active, featured: featured);
+      return Right(result);
+    } catch (e) {
+      return Left(ExceptionMapper.map(e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<String>>> uploadImages(List<dynamic> images) async {
+    try {
+      final imageUrls = await remoteDataSource.uploadImages(images);
+      return Right(imageUrls);
     } catch (e) {
       return Left(ExceptionMapper.map(e));
     }

@@ -18,7 +18,6 @@ class GetProductsUseCase {
   }) {
     return repository.getProducts(
       categoryId: categoryId,
-      searchQuery: searchQuery,
       sortBy: sortBy,
       descending: descending,
       page: page,
