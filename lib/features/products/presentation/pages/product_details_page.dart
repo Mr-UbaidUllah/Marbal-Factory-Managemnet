@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:factory_management/core/di/injection.dart';
 import 'package:factory_management/core/theme/app_colors.dart';
@@ -7,8 +8,7 @@ import 'package:factory_management/core/theme/app_text_styles.dart';
 import 'package:factory_management/features/products/domain/entities/product.dart';
 import 'package:factory_management/features/products/presentation/bloc/product_bloc.dart';
 import 'package:factory_management/features/products/presentation/bloc/product_event.dart';
-import 'package:factory_management/features/products/presentation/bloc/product_state.dart';
-import 'package:hugeicons/hugeicons.dart';
+import 'package:factory_management/features/products/presentation/bloc/product_state.dart' hide ProductStatus;
 import 'package:intl/intl.dart';
 
 class ProductDetailsPage extends StatefulWidget {
@@ -33,7 +33,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
           backgroundColor: Colors.white,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(HugeIcons.strokeRoundedArrowLeft01, color: AppColors.textPrimary),
+            icon: const FaIcon(FontAwesomeIcons.arrowLeft, color: AppColors.textPrimary, size: 20),
             onPressed: () => context.pop(),
           ),
           title: Text('Product Details', style: AppTextStyles.h3),
@@ -46,14 +46,15 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   children: [
                     IconButton(
                       tooltip: 'Edit Product',
-                      icon: const Icon(HugeIcons.strokeRoundedEdit02, color: AppColors.primary),
+                      icon: const FaIcon(FontAwesomeIcons.penToSquare, color: AppColors.primary, size: 20),
                       onPressed: () => context.push('/dashboard/products/edit/${product.id}'),
                     ),
                     IconButton(
                       tooltip: 'Feature Product',
-                      icon: Icon(
-                        product.featured ? HugeIcons.strokeRoundedStar : HugeIcons.strokeRoundedStar, 
+                      icon: FaIcon(
+                        product.featured ? FontAwesomeIcons.solidStar : FontAwesomeIcons.star, 
                         color: product.featured ? AppColors.gold : AppColors.textSecondary,
+                        size: 20,
                       ),
                       onPressed: () {
                         context.read<ProductBloc>().add(UpdateProductEvent(product.copyWith(featured: !product.featured)));
@@ -61,7 +62,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                     ),
                     IconButton(
                       tooltip: 'Delete Product',
-                      icon: const Icon(HugeIcons.strokeRoundedDelete02, color: AppColors.error),
+                      icon: const FaIcon(FontAwesomeIcons.trashCan, color: AppColors.error, size: 20),
                       onPressed: () => _showDeleteDialog(context, product),
                     ),
                     const SizedBox(width: 8),
@@ -81,7 +82,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(HugeIcons.strokeRoundedPackageBox, size: 64, color: AppColors.textSecondary),
+                    const FaIcon(FontAwesomeIcons.boxOpen, size: 64, color: AppColors.textSecondary),
                     const SizedBox(height: 16),
                     Text('Product not found', style: AppTextStyles.h3),
                     const SizedBox(height: 24),
@@ -211,8 +212,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: const Icon(HugeIcons.strokeRoundedImageNotAvailable01, size: 64, color: AppColors.textSecondary),
-      );
+        child: 
+          const Center(child: FaIcon(FontAwesomeIcons.boxOpen, color: AppColors.textSecondary, size: 80)),);
     }
 
     return Column(
@@ -235,7 +236,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 Positioned(
                   bottom: 12,
                   right: 12,
-                  child: Icon(HugeIcons.strokeRoundedZoomIn01, color: Colors.white, size: 24),
+                  child: FaIcon(FontAwesomeIcons.magnifyingGlassPlus, color: Colors.white, size: 24),
                 ),
               ],
             ),
@@ -351,7 +352,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             ),
             child: Row(
               children: [
-                const Icon(HugeIcons.strokeRoundedAlertCircle, color: AppColors.error, size: 20),
+                const FaIcon(FontAwesomeIcons.circleExclamation, color: AppColors.error, size: 20),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -439,6 +440,12 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       case ProductStatus.archived: color = Colors.blueGrey; label = 'Archived'; break;
       case ProductStatus.featured: color = AppColors.gold; label = 'Featured'; break;
       case ProductStatus.draft: color = Colors.blue; label = 'Draft'; break;
+      case ProductStatus.success:
+        // TODO: Handle this case.
+        throw UnimplementedError();
+      case ProductStatus.loading:
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
 
     return Container(
@@ -466,11 +473,11 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         color: AppColors.gold.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
       ),
-      child: const Row(
+      child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(HugeIcons.strokeRoundedStar, color: AppColors.gold, size: 12),
-          SizedBox(width: 4),
+          const FaIcon(FontAwesomeIcons.star, color: AppColors.gold, size: 12),
+          const SizedBox(width: 4),
           Text(
             'FEATURED',
             style: AppTextStyles.bodySmall.copyWith(
@@ -522,7 +529,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               top: 20,
               right: 20,
               child: IconButton(
-                icon: const Icon(HugeIcons.strokeRoundedCancel01, color: Colors.white, size: 32),
+                icon: const FaIcon(FontAwesomeIcons.xmark, color: Colors.white, size: 32),
                 onPressed: () => Navigator.pop(context),
               ),
             ),

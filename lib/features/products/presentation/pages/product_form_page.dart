@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:factory_management/core/di/injection.dart';
 import 'package:factory_management/core/theme/app_colors.dart';
@@ -8,8 +9,7 @@ import 'package:factory_management/core/utils/validators.dart';
 import 'package:factory_management/features/products/domain/entities/product.dart';
 import 'package:factory_management/features/products/presentation/bloc/product_bloc.dart';
 import 'package:factory_management/features/products/presentation/bloc/product_event.dart';
-import 'package:factory_management/features/products/presentation/bloc/product_state.dart';
-import 'package:hugeicons/hugeicons.dart';
+import 'package:factory_management/features/products/presentation/bloc/product_state.dart' hide ProductStatus;
 import 'package:uuid/uuid.dart';
 
 class ProductFormPage extends StatefulWidget {
@@ -156,7 +156,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
               backgroundColor: Colors.white,
               elevation: 0,
               leading: IconButton(
-                icon: const Icon(HugeIcons.strokeRoundedCancel01, color: AppColors.textPrimary),
+                icon: const FaIcon(FontAwesomeIcons.xmark, color: AppColors.textPrimary, size: 20),
                 onPressed: () => Navigator.maybePop(context),
               ),
               title: Text(_isEditMode ? 'Edit Product' : 'Add New Product', style: AppTextStyles.h3),
@@ -281,9 +281,15 @@ class _ProductFormPageState extends State<ProductFormPage> {
       children: [
         Row(
           children: [
-            Expanded(child: _buildTextField(label: 'Price', controller: _priceController, hint: '0.00', prefix: const Icon(HugeIcons.strokeRoundedMoney03, size: 16), keyboardType: TextInputType.number)),
+            Expanded(child: _buildTextField(label: 'Price', controller: _priceController, hint: '0.00', prefix: const Padding(
+              padding: EdgeInsets.all(12.0),
+              child: FaIcon(FontAwesomeIcons.moneyBill, size: 16),
+            ), keyboardType: TextInputType.number)),
             const SizedBox(width: 16),
-            Expanded(child: _buildTextField(label: 'Discount Price', controller: _discountPriceController, hint: '0.00', prefix: const Icon(HugeIcons.strokeRoundedDiscount, size: 16), keyboardType: TextInputType.number)),
+            Expanded(child: _buildTextField(label: 'Discount Price', controller: _discountPriceController, hint: '0.00', prefix: const Padding(
+              padding: EdgeInsets.all(12.0),
+              child: FaIcon(FontAwesomeIcons.tag, size: 16),
+            ), keyboardType: TextInputType.number)),
           ],
         ),
         const SizedBox(height: 20),
@@ -417,7 +423,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
               ),
               child: Row(
                 children: [
-                  const Icon(HugeIcons.strokeRoundedDragDrop, size: 20, color: AppColors.textSecondary),
+                  const FaIcon(FontAwesomeIcons.gripLines, size: 20, color: AppColors.textSecondary),
                   const SizedBox(width: 12),
                   Container(
                     width: 60,
@@ -439,7 +445,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(HugeIcons.strokeRoundedDelete02, color: AppColors.error, size: 20),
+                    icon: const FaIcon(FontAwesomeIcons.trashCan, color: AppColors.error, size: 20),
                     onPressed: () => setState(() {
                       _images.removeAt(index);
                       _onChanged();
@@ -469,7 +475,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
             ),
             child: Column(
               children: [
-                const Icon(HugeIcons.strokeRoundedImageAdd01, color: AppColors.primary, size: 32),
+                const FaIcon(FontAwesomeIcons.image, color: AppColors.primary, size: 32),
                 const SizedBox(height: 8),
                 Text('Upload Images', style: AppTextStyles.bodyMedium.copyWith(color: AppColors.primary, fontWeight: FontWeight.bold)),
                 Text('Support Multiple Uploads', style: AppTextStyles.bodySmall),

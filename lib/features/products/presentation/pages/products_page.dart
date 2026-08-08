@@ -315,10 +315,10 @@ class _ProductsPageState extends State<ProductsPage> {
     );
   }
 
-  Widget _buildBulkButton({required IconData icon, required String label, required VoidCallback onPressed, Color? color}) {
+  Widget _buildBulkButton({required dynamic icon, required String label, required VoidCallback onPressed, Color? color}) {
     return TextButton.icon(
       onPressed: onPressed,
-      icon: FaIcon(icon, size: 14, color: color ?? AppColors.primary),
+      icon: FaIcon(icon is FaIconData ? icon : FontAwesomeIcons.question, size: 14, color: color ?? AppColors.primary),
       label: Text(label, style: AppTextStyles.bodySmall.copyWith(color: color ?? AppColors.primary, fontWeight: FontWeight.bold)),
       style: TextButton.styleFrom(
         padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -327,7 +327,7 @@ class _ProductsPageState extends State<ProductsPage> {
   }
 
   Widget _buildActionButton({
-    required IconData icon,
+    required dynamic icon,
     required VoidCallback onPressed,
     bool isSelected = false,
     String? label,
@@ -340,7 +340,7 @@ class _ProductsPageState extends State<ProductsPage> {
       ),
       child: TextButton.icon(
         onPressed: onPressed,
-        icon: FaIcon(icon, size: 16, color: isSelected ? AppColors.primary : AppColors.textPrimary),
+        icon: FaIcon(icon is FaIconData ? icon : FontAwesomeIcons.question, size: 16, color: isSelected ? AppColors.primary : AppColors.textPrimary),
         label: label != null ? Text(label, style: AppTextStyles.bodyMedium.copyWith(color: isSelected ? AppColors.primary : AppColors.textPrimary)) : const SizedBox.shrink(),
         style: TextButton.styleFrom(
           padding: EdgeInsets.symmetric(horizontal: label != null ? 16 : 8),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:factory_management/core/theme/app_colors.dart';
 import 'package:factory_management/core/theme/app_text_styles.dart';
 import 'package:factory_management/shared/widgets/custom_card.dart';
-import 'package:hugeicons/hugeicons.dart';
+
 
 class RecentQuoteRequests extends StatelessWidget {
   const RecentQuoteRequests({super.key});

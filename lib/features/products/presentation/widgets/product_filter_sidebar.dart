@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:factory_management/core/theme/app_colors.dart';
 import 'package:factory_management/core/theme/app_text_styles.dart';
 import 'package:factory_management/features/products/presentation/bloc/product_bloc.dart';
 import 'package:factory_management/features/products/presentation/bloc/product_event.dart';
 import 'package:factory_management/features/products/presentation/bloc/product_state.dart';
-import 'package:hugeicons/hugeicons.dart';
 
 class ProductFilterSidebar extends StatefulWidget {
   final bool isMobile;
@@ -62,7 +62,7 @@ class _ProductFilterSidebarState extends State<ProductFilterSidebar> {
               children: [
                 Text('Filters', style: AppTextStyles.h3),
                 IconButton(
-                  icon: const Icon(HugeIcons.strokeRoundedCancel01),
+                  icon: const FaIcon(FontAwesomeIcons.xmark, size: 20),
                   onPressed: () => Navigator.pop(context),
                 ),
               ],
@@ -88,7 +88,7 @@ class _ProductFilterSidebarState extends State<ProductFilterSidebar> {
         children: [
           Row(
             children: [
-              const Icon(HugeIcons.strokeRoundedFilter, size: 20, color: AppColors.primary),
+              const FaIcon(FontAwesomeIcons.filter, size: 20, color: AppColors.primary),
               const SizedBox(width: 8),
               Text('Filters', style: AppTextStyles.h3),
             ],

@@ -7,7 +7,7 @@ enum ProductStatus {
   inactive,
   featured,
   draft,
-  archived,
+  archived, success, loading,
 }
 
 class Product extends Equatable {

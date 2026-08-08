@@ -11,10 +11,12 @@ import 'package:factory_management/features/authentication/presentation/pages/lo
 import 'package:factory_management/features/dashboard/presentation/bloc/navigation_bloc.dart';
 import 'package:factory_management/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:factory_management/features/dashboard/presentation/pages/dashboard_shell.dart';
-import 'package:factory_management/features/dashboard/presentation/pages/placeholder_pages.dart';
+import 'package:factory_management/features/dashboard/presentation/pages/placeholder_pages.dart' hide CategoriesPage;
 import 'package:factory_management/features/products/presentation/pages/products_page.dart';
 import 'package:factory_management/features/products/presentation/pages/product_details_page.dart';
 import 'package:factory_management/features/products/presentation/pages/product_form_page.dart';
+import 'package:factory_management/features/categories/presentation/pages/categories_page.dart';
+import 'package:factory_management/features/categories/presentation/pages/category_form_page.dart';
 import 'package:factory_management/features/website/presentation/pages/website_home_page.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -112,6 +114,16 @@ class AppRouter {
                 path: '${RoutePaths.dashboard}/${RoutePaths.dashboardCategories}',
                 name: RouteNames.dashboardCategories,
                 builder: (context, state) => const CategoriesPage(),
+                routes: [
+                  GoRoute(
+                    path: 'add',
+                    builder: (context, state) => const CategoryFormPage(),
+                  ),
+                  GoRoute(
+                    path: 'edit/:id',
+                    builder: (context, state) => CategoryFormPage(categoryId: state.pathParameters['id']),
+                  ),
+                ],
               ),
             ],
           ),

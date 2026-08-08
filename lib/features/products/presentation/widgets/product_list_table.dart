@@ -6,7 +6,7 @@ import 'package:factory_management/core/theme/app_text_styles.dart';
 import 'package:factory_management/features/products/domain/entities/product.dart';
 import 'package:factory_management/features/products/presentation/bloc/product_bloc.dart';
 import 'package:factory_management/features/products/presentation/bloc/product_event.dart';
-import 'package:factory_management/features/products/presentation/bloc/product_state.dart';
+import 'package:factory_management/features/products/presentation/bloc/product_state.dart' hide ProductStatus;
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
@@ -198,6 +198,12 @@ class ProductListTable extends StatelessWidget {
       case ProductStatus.archived: color = Colors.blueGrey; label = 'Archived'; break;
       case ProductStatus.featured: color = AppColors.gold; label = 'Featured'; break;
       case ProductStatus.draft: color = Colors.blue; label = 'Draft'; break;
+      case ProductStatus.success:
+        // TODO: Handle this case.
+        throw UnimplementedError();
+      case ProductStatus.loading:
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
 
     return Container(

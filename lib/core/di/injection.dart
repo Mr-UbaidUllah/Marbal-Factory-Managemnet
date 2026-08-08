@@ -31,6 +31,19 @@ import 'package:factory_management/features/dashboard/domain/usecases/get_dashbo
 import 'package:factory_management/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:factory_management/features/dashboard/presentation/bloc/navigation_bloc.dart';
 
+// Categories
+import 'package:factory_management/features/categories/data/datasources/category_remote_datasource.dart';
+import 'package:factory_management/features/categories/data/repositories/category_repository_impl.dart';
+import 'package:factory_management/features/categories/domain/repositories/category_repository.dart';
+import 'package:factory_management/features/categories/domain/usecases/get_categories.dart';
+import 'package:factory_management/features/categories/domain/usecases/get_category.dart';
+import 'package:factory_management/features/categories/domain/usecases/create_category.dart';
+import 'package:factory_management/features/categories/domain/usecases/update_category.dart';
+import 'package:factory_management/features/categories/domain/usecases/delete_category.dart';
+import 'package:factory_management/features/categories/domain/usecases/toggle_category_status.dart';
+import 'package:factory_management/features/categories/domain/usecases/reorder_categories.dart';
+import 'package:factory_management/features/categories/presentation/bloc/category_bloc.dart';
+
 // Products
 import 'package:factory_management/features/products/data/datasources/product_remote_datasource.dart';
 import 'package:factory_management/features/products/data/repositories/product_repository_impl.dart';
@@ -114,6 +127,32 @@ Future<void> init() async {
   
   sl.registerLazySingleton<DashboardRemoteDataSource>(
     () => DashboardRemoteDataSourceImpl(client: sl<ApiClient>()),
+  );
+
+  // Features - Categories
+  sl.registerFactory<CategoryBloc>(() => CategoryBloc(
+        getCategories: sl<GetCategories>(),
+        getCategory: sl<GetCategory>(),
+        createCategory: sl<CreateCategory>(),
+        updateCategory: sl<UpdateCategory>(),
+        deleteCategory: sl<DeleteCategory>(),
+        toggleCategoryStatus: sl<ToggleCategoryStatus>(),
+        reorderCategories: sl<ReorderCategories>(),
+      ));
+  sl.registerLazySingleton<GetCategories>(() => GetCategories(sl<CategoryRepository>()));
+  sl.registerLazySingleton<GetCategory>(() => GetCategory(sl<CategoryRepository>()));
+  sl.registerLazySingleton<CreateCategory>(() => CreateCategory(sl<CategoryRepository>()));
+  sl.registerLazySingleton<UpdateCategory>(() => UpdateCategory(sl<CategoryRepository>()));
+  sl.registerLazySingleton<DeleteCategory>(() => DeleteCategory(sl<CategoryRepository>()));
+  sl.registerLazySingleton<ToggleCategoryStatus>(() => ToggleCategoryStatus(sl<CategoryRepository>()));
+  sl.registerLazySingleton<ReorderCategories>(() => ReorderCategories(sl<CategoryRepository>()));
+  
+  sl.registerLazySingleton<CategoryRepository>(
+    () => CategoryRepositoryImpl(remoteDataSource: sl<CategoryRemoteDataSource>()),
+  );
+  
+  sl.registerLazySingleton<CategoryRemoteDataSource>(
+    () => CategoryRemoteDataSourceImpl(),
   );
 
   // Features - Products

@@ -8,7 +8,7 @@ class GetProductsUseCase {
 
   GetProductsUseCase(this.repository);
 
-  Future<Either<Failure, List<Product>>> call({
+  Future<Either<Failure, PaginatedProducts>> call({
     String? categoryId,
     String? searchQuery,
     String? sortBy,

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:factory_management/features/products/domain/usecases/get_products.dart';
 import 'package:factory_management/features/products/domain/usecases/get_product.dart';
 import 'package:factory_management/features/products/domain/usecases/create_product.dart';
@@ -8,7 +9,7 @@ import 'package:factory_management/features/products/domain/usecases/delete_prod
 import 'package:factory_management/features/products/domain/repositories/product_repository.dart';
 import 'package:factory_management/features/products/presentation/bloc/product_event.dart';
 import 'package:factory_management/features/products/presentation/bloc/product_state.dart';
-import 'package:rxdart/rxdart.dart';
+
 
 class ProductBloc extends Bloc<ProductEvent, ProductState> {
   final GetProducts getProducts;
