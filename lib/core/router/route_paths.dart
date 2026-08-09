@@ -21,7 +21,14 @@ class RoutePaths {
   static const String dashboardProductDetails = ':id';
 
   static const String dashboardCategories = 'categories';
+  
+  // Inventory
   static const String inventory = 'inventory';
+  static const String inventoryDetails = 'inventory/:id';
+  static const String inventoryHistory = 'inventory/history';
+  static const String inventoryLowStock = 'inventory/low-stock';
+  static const String inventoryOutOfStock = 'inventory/out-of-stock';
+
   static const String quotations = 'quotations';
   static const String customers = 'customers';
   static const String orders = 'orders';

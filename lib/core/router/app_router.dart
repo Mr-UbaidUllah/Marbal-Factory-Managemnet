@@ -11,12 +11,15 @@ import 'package:factory_management/features/authentication/presentation/pages/lo
 import 'package:factory_management/features/dashboard/presentation/bloc/navigation_bloc.dart';
 import 'package:factory_management/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:factory_management/features/dashboard/presentation/pages/dashboard_shell.dart';
-import 'package:factory_management/features/dashboard/presentation/pages/placeholder_pages.dart' hide CategoriesPage;
+import 'package:factory_management/features/dashboard/presentation/pages/placeholder_pages.dart' hide CategoriesPage, InventoryPage;
 import 'package:factory_management/features/products/presentation/pages/products_page.dart';
 import 'package:factory_management/features/products/presentation/pages/product_details_page.dart';
 import 'package:factory_management/features/products/presentation/pages/product_form_page.dart';
 import 'package:factory_management/features/categories/presentation/pages/categories_page.dart';
 import 'package:factory_management/features/categories/presentation/pages/category_form_page.dart';
+import 'package:factory_management/features/inventory/presentation/pages/inventory_page.dart';
+import 'package:factory_management/features/inventory/presentation/pages/inventory_details_page.dart';
+import 'package:factory_management/features/inventory/presentation/pages/inventory_history_page.dart';
 import 'package:factory_management/features/website/presentation/pages/website_home_page.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -32,7 +35,6 @@ class AppRouter {
       final authState = sl<AuthBloc>().state;
       final bool loggingIn = state.uri.path == RoutePaths.login;
       
-      // Public routes that don't require authentication
       final bool isPublicRoute = state.uri.path == RoutePaths.home || 
                                  state.uri.path == RoutePaths.login ||
                                  state.uri.path.startsWith('/products') ||
@@ -50,10 +52,9 @@ class AppRouter {
           return _getHomeRouteForRole(authState.user.role);
         }
         
-        // Role-based access control for dashboard
         if (state.uri.path.startsWith(RoutePaths.dashboard)) {
           if (!_hasAccess(authState.user.role, state.uri.path)) {
-             return RoutePaths.dashboard; // Redirect to dashboard overview if unauthorized
+             return RoutePaths.dashboard;
           }
         }
       }
@@ -133,6 +134,19 @@ class AppRouter {
                 path: '${RoutePaths.dashboard}/${RoutePaths.inventory}',
                 name: RouteNames.inventory,
                 builder: (context, state) => const InventoryPage(),
+                routes: [
+                  GoRoute(
+                    path: 'history',
+                    builder: (context, state) {
+                      final productId = state.uri.queryParameters['productId'];
+                      return InventoryHistoryPage(productId: productId);
+                    },
+                  ),
+                  GoRoute(
+                    path: ':id',
+                    builder: (context, state) => InventoryDetailsPage(productId: state.pathParameters['id']!),
+                  ),
+                ],
               ),
             ],
           ),
@@ -268,7 +282,7 @@ class AppRouter {
         '${RoutePaths.dashboard}/${RoutePaths.notifications}',
         '${RoutePaths.dashboard}/${RoutePaths.profile}',
       ];
-      return allowed.any((p) => path == p);
+      return allowed.any((p) => path.startsWith(p));
     }
 
     if (role == UserRole.staff) {
@@ -280,7 +294,7 @@ class AppRouter {
         '${RoutePaths.dashboard}/${RoutePaths.notifications}',
         '${RoutePaths.dashboard}/${RoutePaths.profile}',
       ];
-      return allowed.any((p) => path == p);
+      return allowed.any((p) => path.startsWith(p));
     }
 
     return false;

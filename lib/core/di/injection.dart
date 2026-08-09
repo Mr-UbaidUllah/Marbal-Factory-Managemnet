@@ -57,6 +57,17 @@ import 'package:factory_management/features/products/domain/usecases/bulk_delete
 import 'package:factory_management/features/products/domain/usecases/bulk_update_status.dart';
 import 'package:factory_management/features/products/presentation/bloc/product_bloc.dart';
 
+// Inventory
+import 'package:factory_management/features/inventory/data/repositories/inventory_repository_impl.dart';
+import 'package:factory_management/features/inventory/domain/repositories/inventory_repository.dart';
+import 'package:factory_management/features/inventory/domain/usecases/add_stock.dart';
+import 'package:factory_management/features/inventory/domain/usecases/adjust_stock.dart';
+import 'package:factory_management/features/inventory/domain/usecases/get_inventory.dart';
+import 'package:factory_management/features/inventory/domain/usecases/get_inventory_details.dart';
+import 'package:factory_management/features/inventory/domain/usecases/get_stock_history.dart';
+import 'package:factory_management/features/inventory/domain/usecases/remove_stock.dart';
+import 'package:factory_management/features/inventory/presentation/bloc/inventory_bloc.dart';
+
 final sl = GetIt.instance;
 
 Future<void> init() async {
@@ -178,5 +189,25 @@ Future<void> init() async {
   
   sl.registerLazySingleton<ProductRemoteDataSource>(
     () => ProductRemoteDataSourceImpl(),
+  );
+
+  // Features - Inventory
+  sl.registerFactory<InventoryBloc>(() => InventoryBloc(
+        getInventory: sl<GetInventory>(),
+        getInventoryDetails: sl<GetInventoryDetails>(),
+        addStock: sl<AddStock>(),
+        removeStock: sl<RemoveStock>(),
+        adjustStock: sl<AdjustStock>(),
+        getStockHistory: sl<GetStockHistory>(),
+      ));
+  sl.registerLazySingleton<GetInventory>(() => GetInventory(sl<InventoryRepository>()));
+  sl.registerLazySingleton<GetInventoryDetails>(() => GetInventoryDetails(sl<InventoryRepository>()));
+  sl.registerLazySingleton<AddStock>(() => AddStock(sl<InventoryRepository>()));
+  sl.registerLazySingleton<RemoveStock>(() => RemoveStock(sl<InventoryRepository>()));
+  sl.registerLazySingleton<AdjustStock>(() => AdjustStock(sl<InventoryRepository>()));
+  sl.registerLazySingleton<GetStockHistory>(() => GetStockHistory(sl<InventoryRepository>()));
+  
+  sl.registerLazySingleton<InventoryRepository>(
+    () => InventoryRepositoryImpl(),
   );
 }
