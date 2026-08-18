@@ -14,11 +14,15 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
   Future<DashboardStatsModel> getDashboardStats() async {
     // Mocking API call
     await Future.delayed(const Duration(milliseconds: 500));
-    return const DashboardStatsModel(
-      totalRevenue: 84200.0,
-      activeProjects: 24,
+    return DashboardStatsModel(
+      totalRevenue: 245600.0,
+      totalOrders: 156,
+      pendingOrders: 12,
+      processingOrders: 8,
+      completedOrders: 130,
+      cancelledOrders: 6,
       pendingQuotes: 48,
-      lowStockAlerts: 12,
+      totalOrderValue: 84200.0,
     );
   }
 }

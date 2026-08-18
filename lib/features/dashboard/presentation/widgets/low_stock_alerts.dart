@@ -38,6 +38,7 @@ class LowStockAlerts extends StatelessWidget {
     return CustomCard(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       border: Border.all(color: AppColors.error.withValues(alpha: 0.2)),
+      margin: const EdgeInsets.only(bottom: 16), onTap: () {  }, title: '',
       child: Row(
         children: [
           Container(

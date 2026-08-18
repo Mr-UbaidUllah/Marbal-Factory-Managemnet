@@ -1,28 +1,40 @@
-import 'package:factory_management/features/dashboard/domain/entities/dashboard_stats.dart';
+import '../../domain/entities/dashboard_stats.dart';
 
 class DashboardStatsModel extends DashboardStats {
   const DashboardStatsModel({
     required super.totalRevenue,
-    required super.activeProjects,
+    required super.totalOrders,
+    required super.pendingOrders,
+    required super.processingOrders,
+    required super.completedOrders,
+    required super.cancelledOrders,
     required super.pendingQuotes,
-    required super.lowStockAlerts,
+    required super.totalOrderValue,
   });
 
   factory DashboardStatsModel.fromJson(Map<String, dynamic> json) {
     return DashboardStatsModel(
       totalRevenue: (json['totalRevenue'] as num).toDouble(),
-      activeProjects: json['activeProjects'] as int,
+      totalOrders: json['totalOrders'] as int,
+      pendingOrders: json['pendingOrders'] as int,
+      processingOrders: json['processingOrders'] as int,
+      completedOrders: json['completedOrders'] as int,
+      cancelledOrders: json['cancelledOrders'] as int,
       pendingQuotes: json['pendingQuotes'] as int,
-      lowStockAlerts: json['lowStockAlerts'] as int,
+      totalOrderValue: (json['totalOrderValue'] as num).toDouble(),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'totalRevenue': totalRevenue,
-      'activeProjects': activeProjects,
+      'totalOrders': totalOrders,
+      'pendingOrders': pendingOrders,
+      'processingOrders': processingOrders,
+      'completedOrders': completedOrders,
+      'cancelledOrders': cancelledOrders,
       'pendingQuotes': pendingQuotes,
-      'lowStockAlerts': lowStockAlerts,
+      'totalOrderValue': totalOrderValue,
     };
   }
 }

@@ -20,7 +20,7 @@ class CustomCard extends StatelessWidget {
     this.color,
     this.borderRadius = 20,
     this.boxShadow,
-    this.border,
+    this.border, required EdgeInsets margin, required void Function() onTap, required String title,
   });
 
   @override

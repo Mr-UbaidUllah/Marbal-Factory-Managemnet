@@ -43,6 +43,7 @@ class AnalyticsSection extends StatelessWidget {
   Widget _buildRevenueOverview() {
     return CustomCard(
       height: 400,
+      margin: const EdgeInsets.only(bottom: 16), onTap: () {  }, title: '',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -63,6 +64,7 @@ class AnalyticsSection extends StatelessWidget {
   Widget _buildProductDistribution() {
     return CustomCard(
       height: 400,
+      margin: const EdgeInsets.only(bottom: 16), onTap: () {  }, title: '',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

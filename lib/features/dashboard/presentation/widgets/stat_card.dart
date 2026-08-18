@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:factory_management/core/theme/app_colors.dart';
 import 'package:factory_management/core/theme/app_text_styles.dart';
 import 'package:factory_management/shared/widgets/custom_card.dart';
+import '../bloc/dashboard_bloc.dart';
+import '../bloc/dashboard_state.dart';
 
 class StatCard extends StatelessWidget {
   final String title;
@@ -25,9 +28,12 @@ class StatCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomCard(
       padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.only(bottom: 16),
+      onTap: () {},
+      title: '',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min, // Allow card to shrink
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -107,60 +113,70 @@ class StatisticsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        int crossAxisCount = 4;
-        double aspectRatio = 1.1;
-
-        if (constraints.maxWidth < 600) {
-          crossAxisCount = 1;
-          aspectRatio = 2.5;
-        } else if (constraints.maxWidth < 1200) {
-          crossAxisCount = 2;
-          aspectRatio = 1.4;
+    return BlocBuilder<DashboardBloc, DashboardState>(
+      builder: (context, state) {
+        if (state.status == DashboardStatus.loading) {
+          return const Center(child: CircularProgressIndicator());
         }
+        
+        final stats = state.stats;
+        
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            int crossAxisCount = 4;
+            double aspectRatio = 1.1;
 
-        return GridView.count(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisCount: crossAxisCount,
-          crossAxisSpacing: 24,
-          mainAxisSpacing: 24,
-          childAspectRatio: aspectRatio,
-          children: const [
-            StatCard(
-              title: 'Total Products',
-              value: '1,284',
-              growth: '+12.5%',
-              isPositive: true,
-              icon: Icons.inventory_2_outlined,
-              iconColor: AppColors.primary,
-            ),
-            StatCard(
-              title: 'Monthly Revenue',
-              value: '\$84,200',
-              growth: '+18.2%',
-              isPositive: true,
-              icon: Icons.payments_outlined,
-              iconColor: AppColors.gold,
-            ),
-            StatCard(
-              title: 'Quote Requests',
-              value: '48',
-              growth: '-4.1%',
-              isPositive: false,
-              icon: Icons.request_quote_outlined,
-              iconColor: AppColors.info,
-            ),
-            StatCard(
-              title: 'Low Stock Items',
-              value: '12',
-              growth: '+2',
-              isPositive: false,
-              icon: Icons.warning_amber_rounded,
-              iconColor: AppColors.error,
-            ),
-          ],
+            if (constraints.maxWidth < 600) {
+              crossAxisCount = 1;
+              aspectRatio = 2.5;
+            } else if (constraints.maxWidth < 1200) {
+              crossAxisCount = 2;
+              aspectRatio = 1.4;
+            }
+
+            return GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: crossAxisCount,
+              crossAxisSpacing: 24,
+              mainAxisSpacing: 24,
+              childAspectRatio: aspectRatio,
+              children: [
+                StatCard(
+                  title: 'Total Revenue',
+                  value: 'SAR ${stats?.totalRevenue.toStringAsFixed(0) ?? '0'}',
+                  growth: '+18.2%',
+                  isPositive: true,
+                  icon: Icons.payments_outlined,
+                  iconColor: AppColors.gold,
+                ),
+                StatCard(
+                  title: 'Total Orders',
+                  value: '${stats?.totalOrders ?? 0}',
+                  growth: '+12.5%',
+                  isPositive: true,
+                  icon: Icons.shopping_bag_outlined,
+                  iconColor: AppColors.primary,
+                ),
+                StatCard(
+                  title: 'Pending Orders',
+                  value: '${stats?.pendingOrders ?? 0}',
+                  growth: '+2',
+                  isPositive: true,
+                  icon: Icons.pending_actions,
+                  iconColor: AppColors.info,
+                ),
+                StatCard(
+                  title: 'Pending Quotes',
+                  value: '${stats?.pendingQuotes ?? 0}',
+                  growth: '-4.1%',
+                  isPositive: false,
+                  icon: Icons.request_quote_outlined,
+                  iconColor: AppColors.warning,
+                ),
+              ],
+            );
+          },
         );
       },
     );

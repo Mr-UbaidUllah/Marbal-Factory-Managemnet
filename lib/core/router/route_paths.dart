@@ -1,44 +1,39 @@
 class RoutePaths {
-  // Auth
-  static const String login = '/login';
-
-  // Customer / Public
+  // Public Routes
   static const String home = '/';
-  static const String customerProducts = '/products';
-  static const String productDetails = '/products/:id';
-  static const String customerCategories = '/categories';
-  static const String gallery = '/gallery';
+  static const String login = '/login';
   static const String about = '/about';
   static const String contact = '/contact';
+  static const String products = '/products';
+  static const String productDetails = '/products/:id';
   static const String quoteRequest = '/quote-request';
+  static const String publicQuoteDetails = '/quotes/:id';
 
-  // Dashboard
+  // Dashboard Routes
   static const String dashboard = '/dashboard';
-  static const String dashboardOverview = 'overview'; // Relative to /dashboard
+  static const String dashboardOverview = 'overview';
   static const String dashboardProducts = 'products';
   static const String addProduct = 'add';
   static const String editProduct = 'edit/:id';
-  static const String dashboardProductDetails = ':id';
-
-  static const String dashboardCategories = 'categories';
+  static const String dashboardProductDetails = 'details/:id';
   
-  // Inventory
+  static const String dashboardCategories = 'categories';
   static const String inventory = 'inventory';
-  static const String inventoryDetails = 'inventory/:id';
-  static const String inventoryHistory = 'inventory/history';
-  static const String inventoryLowStock = 'inventory/low-stock';
-  static const String inventoryOutOfStock = 'inventory/out-of-stock';
-
   static const String quotations = 'quotations';
+  static const String quoteDetails = 'quotations/:id';
+  static const String quoteReview = 'quotations/:id/review';
+  static const String quoteRespond = 'quotations/:id/respond';
+  
   static const String customers = 'customers';
   static const String orders = 'orders';
+  static const String orderDetails = 'orders/:id';
+  static const String orderEdit = 'orders/:id/edit';
+  static const String orderInvoice = 'orders/:id/invoice';
+
   static const String employees = 'employees';
   static const String analytics = 'analytics';
   static const String reports = 'reports';
   static const String notifications = 'notifications';
   static const String settings = 'settings';
   static const String profile = 'profile';
-  
-  // Error
-  static const String error = '/error';
 }

@@ -10,6 +10,7 @@ class ActivityCalendar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomCard(
+      margin: const EdgeInsets.only(bottom: 16), onTap: () {  }, title: '',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

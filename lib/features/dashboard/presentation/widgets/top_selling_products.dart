@@ -84,6 +84,7 @@ class TopSellingProducts extends StatelessWidget {
     return CustomCard(
       width: 220,
       padding: EdgeInsets.zero,
+       margin: const EdgeInsets.only(bottom: 16), onTap: () {  }, title: '',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

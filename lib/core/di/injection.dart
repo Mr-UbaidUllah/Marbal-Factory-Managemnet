@@ -57,16 +57,34 @@ import 'package:factory_management/features/products/domain/usecases/bulk_delete
 import 'package:factory_management/features/products/domain/usecases/bulk_update_status.dart';
 import 'package:factory_management/features/products/presentation/bloc/product_bloc.dart';
 
-// Inventory
-import 'package:factory_management/features/inventory/data/repositories/inventory_repository_impl.dart';
-import 'package:factory_management/features/inventory/domain/repositories/inventory_repository.dart';
-import 'package:factory_management/features/inventory/domain/usecases/add_stock.dart';
-import 'package:factory_management/features/inventory/domain/usecases/adjust_stock.dart';
-import 'package:factory_management/features/inventory/domain/usecases/get_inventory.dart';
-import 'package:factory_management/features/inventory/domain/usecases/get_inventory_details.dart';
-import 'package:factory_management/features/inventory/domain/usecases/get_stock_history.dart';
-import 'package:factory_management/features/inventory/domain/usecases/remove_stock.dart';
-import 'package:factory_management/features/inventory/presentation/bloc/inventory_bloc.dart';
+// Quotations
+import 'package:factory_management/features/quotations/data/repositories/quote_repository_impl.dart';
+import 'package:factory_management/features/quotations/domain/repositories/quote_repository.dart';
+import 'package:factory_management/features/quotations/domain/usecases/get_quotes.dart';
+import 'package:factory_management/features/quotations/domain/usecases/get_quote_by_id.dart';
+import 'package:factory_management/features/quotations/domain/usecases/create_quote.dart';
+import 'package:factory_management/features/quotations/domain/usecases/update_quote.dart';
+import 'package:factory_management/features/quotations/domain/usecases/submit_quote.dart';
+import 'package:factory_management/features/quotations/domain/usecases/review_quote.dart';
+import 'package:factory_management/features/quotations/domain/usecases/respond_to_quote.dart';
+import 'package:factory_management/features/quotations/domain/usecases/accept_quote.dart';
+import 'package:factory_management/features/quotations/domain/usecases/reject_quote.dart';
+import 'package:factory_management/features/quotations/domain/usecases/cancel_quote.dart';
+import 'package:factory_management/features/quotations/presentation/bloc/quote_bloc.dart';
+
+// Orders
+import 'package:factory_management/features/orders/data/repositories/order_repository_impl.dart';
+import 'package:factory_management/features/orders/domain/repositories/order_repository.dart';
+import 'package:factory_management/features/orders/domain/usecases/get_orders.dart';
+import 'package:factory_management/features/orders/domain/usecases/get_order.dart';
+import 'package:factory_management/features/orders/domain/usecases/create_order_from_quote.dart';
+import 'package:factory_management/features/orders/domain/usecases/update_order.dart';
+import 'package:factory_management/features/orders/domain/usecases/change_order_status.dart';
+import 'package:factory_management/features/orders/domain/usecases/update_payment.dart';
+import 'package:factory_management/features/orders/domain/usecases/cancel_order.dart';
+import 'package:factory_management/features/orders/domain/usecases/get_order_status_history.dart';
+import 'package:factory_management/features/orders/presentation/bloc/order_bloc.dart';
+
 
 final sl = GetIt.instance;
 
@@ -191,23 +209,53 @@ Future<void> init() async {
     () => ProductRemoteDataSourceImpl(),
   );
 
-  // Features - Inventory
-  sl.registerFactory<InventoryBloc>(() => InventoryBloc(
-        getInventory: sl<GetInventory>(),
-        getInventoryDetails: sl<GetInventoryDetails>(),
-        addStock: sl<AddStock>(),
-        removeStock: sl<RemoveStock>(),
-        adjustStock: sl<AdjustStock>(),
-        getStockHistory: sl<GetStockHistory>(),
+  // Features - Quotations
+  sl.registerFactory<QuoteBloc>(() => QuoteBloc(
+        getQuotes: sl<GetQuotes>(),
+        getQuoteById: sl<GetQuoteById>(),
+        createQuote: sl<CreateQuote>(),
+        reviewQuote: sl<ReviewQuote>(),
+        respondToQuote: sl<RespondToQuote>(),
+        acceptQuote: sl<AcceptQuote>(),
+        rejectQuote: sl<RejectQuote>(),
+        cancelQuote: sl<CancelQuote>(),
       ));
-  sl.registerLazySingleton<GetInventory>(() => GetInventory(sl<InventoryRepository>()));
-  sl.registerLazySingleton<GetInventoryDetails>(() => GetInventoryDetails(sl<InventoryRepository>()));
-  sl.registerLazySingleton<AddStock>(() => AddStock(sl<InventoryRepository>()));
-  sl.registerLazySingleton<RemoveStock>(() => RemoveStock(sl<InventoryRepository>()));
-  sl.registerLazySingleton<AdjustStock>(() => AdjustStock(sl<InventoryRepository>()));
-  sl.registerLazySingleton<GetStockHistory>(() => GetStockHistory(sl<InventoryRepository>()));
-  
-  sl.registerLazySingleton<InventoryRepository>(
-    () => InventoryRepositoryImpl(),
+  sl.registerLazySingleton<GetQuotes>(() => GetQuotes(sl<QuoteRepository>()));
+  sl.registerLazySingleton<GetQuoteById>(() => GetQuoteById(sl<QuoteRepository>()));
+  sl.registerLazySingleton<CreateQuote>(() => CreateQuote(sl<QuoteRepository>()));
+  sl.registerLazySingleton<UpdateQuote>(() => UpdateQuote(sl<QuoteRepository>()));
+  sl.registerLazySingleton<SubmitQuote>(() => SubmitQuote(sl<QuoteRepository>()));
+  sl.registerLazySingleton<ReviewQuote>(() => ReviewQuote(sl<QuoteRepository>()));
+  sl.registerLazySingleton<RespondToQuote>(() => RespondToQuote(sl<QuoteRepository>()));
+  sl.registerLazySingleton<AcceptQuote>(() => AcceptQuote(sl<QuoteRepository>()));
+  sl.registerLazySingleton<RejectQuote>(() => RejectQuote(sl<QuoteRepository>()));
+  sl.registerLazySingleton<CancelQuote>(() => CancelQuote(sl<QuoteRepository>()));
+
+  sl.registerLazySingleton<QuoteRepository>(
+    () => QuoteRepositoryImpl(),
+  );
+
+  // Features - Orders
+  sl.registerFactory<OrderBloc>(() => OrderBloc(
+        getOrders: sl<GetOrders>(),
+        getOrder: sl<GetOrder>(),
+        createOrderFromQuote: sl<CreateOrderFromQuote>(),
+        updateOrder: sl<UpdateOrder>(),
+        changeOrderStatus: sl<ChangeOrderStatus>(),
+        updatePayment: sl<UpdatePayment>(),
+        cancelOrder: sl<CancelOrder>(),
+        getOrderStatusHistory: sl<GetOrderStatusHistory>(),
+      ));
+  sl.registerLazySingleton<GetOrders>(() => GetOrders(sl<OrderRepository>()));
+  sl.registerLazySingleton<GetOrder>(() => GetOrder(sl<OrderRepository>()));
+  sl.registerLazySingleton<CreateOrderFromQuote>(() => CreateOrderFromQuote(sl<OrderRepository>()));
+  sl.registerLazySingleton<UpdateOrder>(() => UpdateOrder(sl<OrderRepository>()));
+  sl.registerLazySingleton<ChangeOrderStatus>(() => ChangeOrderStatus(sl<OrderRepository>()));
+  sl.registerLazySingleton<UpdatePayment>(() => UpdatePayment(sl<OrderRepository>()));
+  sl.registerLazySingleton<CancelOrder>(() => CancelOrder(sl<OrderRepository>()));
+  sl.registerLazySingleton<GetOrderStatusHistory>(() => GetOrderStatusHistory(sl<OrderRepository>()));
+
+  sl.registerLazySingleton<OrderRepository>(
+    () => OrderRepositoryImpl(quoteRepository: sl<QuoteRepository>()),
   );
 }

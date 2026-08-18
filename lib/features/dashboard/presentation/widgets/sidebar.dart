@@ -17,7 +17,9 @@ class Sidebar extends StatelessWidget {
       builder: (context, navState) {
         return BlocBuilder<AuthBloc, AuthState>(
           builder: (context, authState) {
-            final userRole = authState is Authenticated ? authState.user.role : UserRole.customer;
+            final userRole = authState is Authenticated
+                ? authState.user.role
+                : UserRole.customer;
             final isCollapsed = navState.isSidebarCollapsed;
 
             return AnimatedContainer(
@@ -54,7 +56,9 @@ class Sidebar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
       child: Row(
-        mainAxisAlignment: isCollapsed ? MainAxisAlignment.center : MainAxisAlignment.start,
+        mainAxisAlignment: isCollapsed
+            ? MainAxisAlignment.center
+            : MainAxisAlignment.start,
         children: [
           Container(
             width: 40,
@@ -78,7 +82,10 @@ class Sidebar extends StatelessWidget {
                 children: [
                   Text(
                     'ALAM MARBLE',
-                    style: AppTextStyles.h3.copyWith(color: Colors.white, fontSize: 16),
+                    style: AppTextStyles.h3.copyWith(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
@@ -103,14 +110,23 @@ class Sidebar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12),
       itemBuilder: (context, index) {
         final item = items[index];
-        final isSelected = currentPath == item.path || (item.path == RoutePaths.dashboard && currentPath == '${RoutePaths.dashboard}/${RoutePaths.dashboardOverview}');
+        final isSelected =
+            currentPath == item.path ||
+            (item.path == RoutePaths.dashboard &&
+                currentPath ==
+                    '${RoutePaths.dashboard}/${RoutePaths.dashboardOverview}');
 
         return _buildNavItem(context, item, isSelected, isCollapsed);
       },
     );
   }
 
-  Widget _buildNavItem(BuildContext context, SidebarItem item, bool isSelected, bool isCollapsed) {
+  Widget _buildNavItem(
+    BuildContext context,
+    SidebarItem item,
+    bool isSelected,
+    bool isCollapsed,
+  ) {
     final widget = Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: InkWell(
@@ -119,7 +135,9 @@ class Sidebar extends StatelessWidget {
             context.read<AuthBloc>().add(LogoutRequested());
           } else {
             context.go(item.path);
-            context.read<NavigationBloc>().add(UpdateBreadcrumbsEvent([item.label]));
+            context.read<NavigationBloc>().add(
+              UpdateBreadcrumbsEvent([item.label]),
+            );
           }
         },
         borderRadius: BorderRadius.circular(12),
@@ -130,12 +148,18 @@ class Sidebar extends StatelessWidget {
             vertical: 12,
           ),
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : Colors.transparent,
+            color: isSelected
+                ? AppColors.primary.withValues(alpha: 0.1)
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
-            border: isSelected ? Border.all(color: AppColors.primary.withValues(alpha: 0.2)) : null,
+            border: isSelected
+                ? Border.all(color: AppColors.primary.withValues(alpha: 0.2))
+                : null,
           ),
           child: Row(
-            mainAxisAlignment: isCollapsed ? MainAxisAlignment.center : MainAxisAlignment.start,
+            mainAxisAlignment: isCollapsed
+                ? MainAxisAlignment.center
+                : MainAxisAlignment.start,
             children: [
               Icon(
                 item.icon,
@@ -149,7 +173,9 @@ class Sidebar extends StatelessWidget {
                     item.label,
                     style: AppTextStyles.bodyMedium.copyWith(
                       color: isSelected ? Colors.white : Colors.white60,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w400,
                     ),
                   ),
                 ),
@@ -161,10 +187,7 @@ class Sidebar extends StatelessWidget {
     );
 
     if (isCollapsed) {
-      return Tooltip(
-        message: item.label,
-        child: widget,
-      );
+      return Tooltip(message: item.label, child: widget);
     }
     return widget;
   }
@@ -173,7 +196,8 @@ class Sidebar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       child: IconButton(
-        onPressed: () => context.read<NavigationBloc>().add(ToggleSidebarEvent()),
+        onPressed: () =>
+            context.read<NavigationBloc>().add(ToggleSidebarEvent()),
         icon: Icon(
           isCollapsed ? Icons.arrow_right_alt_outlined : Icons.arrow_right_alt,
           color: Colors.white60,
@@ -184,20 +208,72 @@ class Sidebar extends StatelessWidget {
 
   List<SidebarItem> _getSidebarItems(UserRole role) {
     final allItems = [
-      SidebarItem(icon: Icons.dashboard, label: 'Dashboard', path: RoutePaths.dashboard, roles: [UserRole.owner, UserRole.admin, UserRole.staff]),
-      SidebarItem(icon: Icons.production_quantity_limits, label: 'Products', path: '${RoutePaths.dashboard}/${RoutePaths.dashboardProducts}', roles: [UserRole.owner, UserRole.admin, UserRole.staff]),
-      SidebarItem(icon: Icons.menu, label: 'Categories', path: '${RoutePaths.dashboard}/${RoutePaths.dashboardCategories}', roles: [UserRole.owner, UserRole.admin]),
-      SidebarItem(icon: Icons.inventory, label: 'Inventory', path: '${RoutePaths.dashboard}/${RoutePaths.inventory}', roles: [UserRole.owner, UserRole.admin, UserRole.staff]),
-      SidebarItem(icon: Icons.request_page, label: 'Quotations', path: '${RoutePaths.dashboard}/${RoutePaths.quotations}', roles: [UserRole.owner, UserRole.staff]),
-      SidebarItem(icon: Icons.person, label: 'Customers', path: '${RoutePaths.dashboard}/${RoutePaths.customers}', roles: [UserRole.owner, UserRole.admin]),
-      SidebarItem(icon: Icons.shopping_cart, label: 'Orders', path: '${RoutePaths.dashboard}/${RoutePaths.orders}', roles: [UserRole.owner, UserRole.admin]),
-      SidebarItem(icon: Icons.supervised_user_circle_rounded, label: 'Employees', path: '${RoutePaths.dashboard}/${RoutePaths.employees}', roles: [UserRole.owner]),
-      SidebarItem(icon: Icons.bar_chart, label: 'Analytics', path: '${RoutePaths.dashboard}/${RoutePaths.analytics}', roles: [UserRole.owner, UserRole.admin]),
-      SidebarItem(icon: Icons.report, label: 'Reports', path: '${RoutePaths.dashboard}/${RoutePaths.reports}', roles: [UserRole.owner, UserRole.admin]),
-      SidebarItem(icon: Icons.notification_add_outlined, label: 'Notifications', path: '${RoutePaths.dashboard}/${RoutePaths.notifications}', roles: [UserRole.owner, UserRole.admin, UserRole.staff]),
-      SidebarItem(icon: Icons.settings, label: 'Settings', path: '${RoutePaths.dashboard}/${RoutePaths.settings}', roles: [UserRole.owner]),
-      SidebarItem(icon: Icons.account_circle, label: 'Profile', path: '${RoutePaths.dashboard}/${RoutePaths.profile}', roles: [UserRole.owner, UserRole.admin, UserRole.staff]),
-      SidebarItem(icon: Icons.logout, label: 'Logout', path: RoutePaths.login, roles: [UserRole.owner, UserRole.admin, UserRole.staff]),
+      SidebarItem(
+        icon: Icons.dashboard,
+        label: 'Dashboard',
+        path: RoutePaths.dashboard,
+        roles: [UserRole.owner, UserRole.admin, UserRole.staff],
+      ),
+      SidebarItem(
+        icon: Icons.production_quantity_limits,
+        label: 'Products',
+        path: '${RoutePaths.dashboard}/${RoutePaths.dashboardProducts}',
+        roles: [UserRole.owner, UserRole.admin, UserRole.staff],
+      ),
+      SidebarItem(
+        icon: Icons.menu,
+        label: 'Categories',
+        path: '${RoutePaths.dashboard}/${RoutePaths.dashboardCategories}',
+        roles: [UserRole.owner, UserRole.admin],
+      ),
+      SidebarItem(
+        icon: Icons.request_page,
+        label: 'Quotations',
+        path: '${RoutePaths.dashboard}/${RoutePaths.quotations}',
+        roles: [UserRole.owner, UserRole.staff],
+      ),
+      SidebarItem(
+        icon: Icons.shopping_cart,
+        label: 'Orders',
+        path: '${RoutePaths.dashboard}/${RoutePaths.orders}',
+        roles: [UserRole.owner, UserRole.admin],
+      ),
+      SidebarItem(
+        icon: Icons.bar_chart,
+        label: 'Analytics',
+        path: '${RoutePaths.dashboard}/${RoutePaths.analytics}',
+        roles: [UserRole.owner, UserRole.admin],
+      ),
+      SidebarItem(
+        icon: Icons.report,
+        label: 'Reports',
+        path: '${RoutePaths.dashboard}/${RoutePaths.reports}',
+        roles: [UserRole.owner, UserRole.admin],
+      ),
+      SidebarItem(
+        icon: Icons.notification_add_outlined,
+        label: 'Notifications',
+        path: '${RoutePaths.dashboard}/${RoutePaths.notifications}',
+        roles: [UserRole.owner, UserRole.admin, UserRole.staff],
+      ),
+      SidebarItem(
+        icon: Icons.settings,
+        label: 'Settings',
+        path: '${RoutePaths.dashboard}/${RoutePaths.settings}',
+        roles: [UserRole.owner],
+      ),
+      SidebarItem(
+        icon: Icons.account_circle,
+        label: 'Profile',
+        path: '${RoutePaths.dashboard}/${RoutePaths.profile}',
+        roles: [UserRole.owner, UserRole.admin, UserRole.staff],
+      ),
+      SidebarItem(
+        icon: Icons.logout,
+        label: 'Logout',
+        path: RoutePaths.login,
+        roles: [UserRole.owner, UserRole.admin, UserRole.staff],
+      ),
     ];
 
     return allItems.where((item) => item.roles.contains(role)).toList();

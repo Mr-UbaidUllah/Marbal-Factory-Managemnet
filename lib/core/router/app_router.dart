@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:factory_management/core/di/injection.dart';
 import 'package:factory_management/core/router/route_names.dart';
@@ -8,7 +7,6 @@ import 'package:factory_management/core/router/route_paths.dart';
 import 'package:factory_management/features/authentication/domain/entities/user_entity.dart';
 import 'package:factory_management/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:factory_management/features/authentication/presentation/pages/login_page.dart';
-import 'package:factory_management/features/dashboard/presentation/bloc/navigation_bloc.dart';
 import 'package:factory_management/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:factory_management/features/dashboard/presentation/pages/dashboard_shell.dart';
 import 'package:factory_management/features/dashboard/presentation/pages/placeholder_pages.dart' hide CategoriesPage, InventoryPage;
@@ -17,13 +15,16 @@ import 'package:factory_management/features/products/presentation/pages/product_
 import 'package:factory_management/features/products/presentation/pages/product_form_page.dart';
 import 'package:factory_management/features/categories/presentation/pages/categories_page.dart';
 import 'package:factory_management/features/categories/presentation/pages/category_form_page.dart';
-import 'package:factory_management/features/inventory/presentation/pages/inventory_page.dart';
-import 'package:factory_management/features/inventory/presentation/pages/inventory_details_page.dart';
-import 'package:factory_management/features/inventory/presentation/pages/inventory_history_page.dart';
 import 'package:factory_management/features/website/presentation/pages/website_home_page.dart';
+import 'package:factory_management/features/quotations/presentation/pages/quotations_page.dart' hide QuotationsPage;
+import 'package:factory_management/features/quotations/presentation/pages/quote_details_page.dart';
+import 'package:factory_management/features/quotations/presentation/pages/quote_response_page.dart';
+import 'package:factory_management/features/orders/presentation/pages/orders_page.dart' hide OrdersPage;
+import 'package:factory_management/features/orders/presentation/pages/order_details_page.dart';
+import 'package:factory_management/features/orders/presentation/pages/order_invoice_page.dart';
+import 'package:factory_management/features/orders/presentation/pages/order_form_page.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
-final GlobalKey<NavigatorState> _shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -38,12 +39,13 @@ class AppRouter {
       final bool isPublicRoute = state.uri.path == RoutePaths.home || 
                                  state.uri.path == RoutePaths.login ||
                                  state.uri.path.startsWith('/products') ||
+                                 state.uri.path.startsWith('/quotes/') ||
                                  state.uri.path == RoutePaths.about ||
                                  state.uri.path == RoutePaths.contact;
 
       if (authState is Unauthenticated || authState is AuthInitial) {
-        if (!isPublicRoute) {
-          return RoutePaths.login;
+        if (!isPublicRoute && state.uri.path.startsWith(RoutePaths.dashboard)) {
+             return RoutePaths.login;
         }
       }
 
@@ -71,6 +73,10 @@ class AppRouter {
         path: RoutePaths.login,
         name: RouteNames.login,
         builder: (context, state) => const LoginPage(),
+      ),
+      GoRoute(
+        path: RoutePaths.publicQuoteDetails,
+        builder: (context, state) => QuoteDetailsPage(quoteId: state.pathParameters['id']!),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
@@ -131,31 +137,19 @@ class AppRouter {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: '${RoutePaths.dashboard}/${RoutePaths.inventory}',
-                name: RouteNames.inventory,
-                builder: (context, state) => const InventoryPage(),
-                routes: [
-                  GoRoute(
-                    path: 'history',
-                    builder: (context, state) {
-                      final productId = state.uri.queryParameters['productId'];
-                      return InventoryHistoryPage(productId: productId);
-                    },
-                  ),
-                  GoRoute(
-                    path: ':id',
-                    builder: (context, state) => InventoryDetailsPage(productId: state.pathParameters['id']!),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
                 path: '${RoutePaths.dashboard}/${RoutePaths.quotations}',
                 name: RouteNames.quotations,
                 builder: (context, state) => const QuotationsPage(),
+                routes: [
+                  GoRoute(
+                    path: ':id',
+                    builder: (context, state) => QuoteDetailsPage(quoteId: state.pathParameters['id']!),
+                  ),
+                  GoRoute(
+                    path: ':id/respond',
+                    builder: (context, state) => QuoteResponsePage(quoteId: state.pathParameters['id']!),
+                  ),
+                ],
               ),
             ],
           ),
@@ -174,6 +168,20 @@ class AppRouter {
                 path: '${RoutePaths.dashboard}/${RoutePaths.orders}',
                 name: RouteNames.orders,
                 builder: (context, state) => const OrdersPage(),
+                routes: [
+                  GoRoute(
+                    path: ':id',
+                    builder: (context, state) => OrderDetailsPage(orderId: state.pathParameters['id']!),
+                  ),
+                  GoRoute(
+                    path: ':id/edit',
+                    builder: (context, state) => OrderFormPage(orderId: state.pathParameters['id']!),
+                  ),
+                  GoRoute(
+                    path: ':id/invoice',
+                    builder: (context, state) => OrderInvoicePage(orderId: state.pathParameters['id']!),
+                  ),
+                ],
               ),
             ],
           ),
@@ -275,6 +283,7 @@ class AppRouter {
         '${RoutePaths.dashboard}/${RoutePaths.dashboardProducts}',
         '${RoutePaths.dashboard}/${RoutePaths.dashboardCategories}',
         '${RoutePaths.dashboard}/${RoutePaths.inventory}',
+        '${RoutePaths.dashboard}/${RoutePaths.quotations}',
         '${RoutePaths.dashboard}/${RoutePaths.customers}',
         '${RoutePaths.dashboard}/${RoutePaths.orders}',
         '${RoutePaths.dashboard}/${RoutePaths.reports}',
@@ -291,6 +300,7 @@ class AppRouter {
         '${RoutePaths.dashboard}/${RoutePaths.dashboardProducts}',
         '${RoutePaths.dashboard}/${RoutePaths.inventory}',
         '${RoutePaths.dashboard}/${RoutePaths.quotations}',
+        '${RoutePaths.dashboard}/${RoutePaths.orders}',
         '${RoutePaths.dashboard}/${RoutePaths.notifications}',
         '${RoutePaths.dashboard}/${RoutePaths.profile}',
       ];
