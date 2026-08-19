@@ -1,4 +1,4 @@
-import 'package:dartz/dartz.dart';
+import 'package:dartz/dartz.dart' hide Order;
 import '../../../../core/errors/failures.dart';
 import '../entities/order.dart';
 import '../entities/order_status.dart';

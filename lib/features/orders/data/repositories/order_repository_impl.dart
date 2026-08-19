@@ -18,7 +18,140 @@ class OrderRepositoryImpl implements OrderRepository {
   final List<Order> _mockOrders = [];
   final List<OrderStatusHistory> _mockHistory = [];
 
-  OrderRepositoryImpl({required this.quoteRepository});
+  OrderRepositoryImpl({required this.quoteRepository}) {
+    _generateMockData();
+  }
+
+  void _generateMockData() {
+    final now = DateTime.now();
+    
+    // Order 1: Pending (from Carrara Marble quote)
+    final order1Id = 'ord-1';
+    _mockOrders.add(Order(
+      id: order1Id,
+      orderNumber: 'AMGF-ORD-2024-1001',
+      quoteId: 'q-101',
+      quoteNumber: 'AMGF-Q-2024-0001',
+      customerName: 'John Doe',
+      customerPhone: '+966 50 123 4567',
+      customerEmail: 'john@example.com',
+      items: [
+        OrderItem(
+          id: 'oi-1',
+          orderId: order1Id,
+          productId: 'p1',
+          productName: 'Italian Carrara Marble',
+          sku: 'MAR-ITA-001',
+          categoryId: 'cat1',
+          categoryName: 'Marble',
+          quantity: 50,
+          unit: 'sqm',
+          unitPrice: 450,
+          notes: 'High quality finish required',
+        ),
+      ],
+      status: OrderStatus.pending,
+      subtotal: 22500,
+      discount: 500,
+      tax: 3300,
+      deliveryCharges: 250,
+      total: 25550,
+      paymentStatus: PaymentStatus.pending,
+      paymentMethod: PaymentMethod.bankTransfer,
+      deliveryAddress: 'Riyadh, Industrial Area',
+      createdAt: now.subtract(const Duration(days: 2)),
+      updatedAt: now.subtract(const Duration(days: 2)),
+    ));
+    _recordHistory(order1Id, null, OrderStatus.pending, 'Order created from quote');
+
+    // Order 2: Processing (from Black Galaxy Granite quote)
+    final order2Id = 'ord-2';
+    _mockOrders.add(Order(
+      id: order2Id,
+      orderNumber: 'AMGF-ORD-2024-1002',
+      quoteId: 'q-102',
+      quoteNumber: 'AMGF-Q-2024-0002',
+      customerName: 'Jane Smith',
+      customerPhone: '+966 55 987 6543',
+      items: [
+        OrderItem(
+          id: 'oi-2',
+          orderId: order2Id,
+          productId: 'p2',
+          productName: 'Black Galaxy Granite',
+          sku: 'GRA-IND-002',
+          categoryId: 'cat2',
+          categoryName: 'Granite',
+          quantity: 30,
+          unit: 'sqm',
+          unitPrice: 280,
+        ),
+      ],
+      status: OrderStatus.processing,
+      subtotal: 8400,
+      discount: 0,
+      tax: 1260,
+      deliveryCharges: 150,
+      total: 9810,
+      paymentStatus: PaymentStatus.partial,
+      paymentMethod: PaymentMethod.cash,
+      paymentReference: 'CASH-8821',
+      deliveryAddress: 'Dammam, King Fahd Road',
+      createdAt: now.subtract(const Duration(days: 5)),
+      updatedAt: now.subtract(const Duration(days: 1)),
+      confirmedAt: now.subtract(const Duration(days: 4)),
+      processingAt: now.subtract(const Duration(days: 1)),
+    ));
+    _recordHistory(order2Id, null, OrderStatus.pending, 'Order created');
+    _recordHistory(order2Id, OrderStatus.pending, OrderStatus.confirmed, 'Confirmed by customer');
+    _recordHistory(order2Id, OrderStatus.confirmed, OrderStatus.processing, 'Cutting started');
+
+    // Order 3: Completed
+    final order3Id = 'ord-3';
+    _mockOrders.add(Order(
+      id: order3Id,
+      orderNumber: 'AMGF-ORD-2024-0998',
+      quoteId: 'q-098',
+      quoteNumber: 'AMGF-Q-2024-0098',
+      customerName: 'Ahmed Ali',
+      customerPhone: '+966 59 111 2222',
+      items: [
+        OrderItem(
+          id: 'oi-3',
+          orderId: order3Id,
+          productId: 'p3',
+          productName: 'Volakas White Marble',
+          sku: 'MAR-GRE-003',
+          categoryId: 'cat1',
+          categoryName: 'Marble',
+          quantity: 10,
+          unit: 'sqm',
+          unitPrice: 600,
+        ),
+      ],
+      status: OrderStatus.completed,
+      subtotal: 6000,
+      discount: 200,
+      tax: 870,
+      deliveryCharges: 100,
+      total: 6770,
+      paymentStatus: PaymentStatus.paid,
+      paymentMethod: PaymentMethod.card,
+      paymentReference: 'TXN-998273',
+      deliveryAddress: 'Jeddah, Al Hamra',
+      createdAt: now.subtract(const Duration(days: 20)),
+      updatedAt: now.subtract(const Duration(days: 15)),
+      confirmedAt: now.subtract(const Duration(days: 19)),
+      processingAt: now.subtract(const Duration(days: 18)),
+      readyAt: now.subtract(const Duration(days: 16)),
+      completedAt: now.subtract(const Duration(days: 15)),
+    ));
+    _recordHistory(order3Id, null, OrderStatus.pending, 'Initial creation');
+    _recordHistory(order3Id, OrderStatus.pending, OrderStatus.confirmed, null);
+    _recordHistory(order3Id, OrderStatus.confirmed, OrderStatus.processing, null);
+    _recordHistory(order3Id, OrderStatus.processing, OrderStatus.ready, 'Quality check passed');
+    _recordHistory(order3Id, OrderStatus.ready, OrderStatus.completed, 'Delivered and signed');
+  }
 
   @override
   Future<Either<Failure, List<Order>>> getOrders({
@@ -142,7 +275,6 @@ class OrderRepositoryImpl implements OrderRepository {
             createdAt: DateTime.now(),
             updatedAt: DateTime.now(),
           );
-
           // 15. Save the Order
           _mockOrders.add(newOrder);
 
@@ -170,9 +302,6 @@ class OrderRepositoryImpl implements OrderRepository {
         return const Left(ValidationFailure('Completed or cancelled orders cannot be edited.'));
       }
 
-      // Implement editing restrictions based on status as per PHASE 19
-      // For now, allow general update as the UI will handle specific field access
-      
       final updated = OrderModel.fromEntity(order).copyWith(updatedAt: DateTime.now());
       _mockOrders[index] = updated;
       return Right(updated);
@@ -284,10 +413,10 @@ class OrderRepositoryImpl implements OrderRepository {
     _mockHistory.add(OrderStatusHistory(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       orderId: orderId,
-      previousStatus: previousStatus ?? newStatus, // For initial creation, use same status or a dummy
+      previousStatus: previousStatus ?? newStatus, 
       newStatus: newStatus,
       note: note,
-      changedBy: 'Admin', // In real app, get from auth
+      changedBy: 'Admin',
       createdAt: DateTime.now(),
     ));
   }
