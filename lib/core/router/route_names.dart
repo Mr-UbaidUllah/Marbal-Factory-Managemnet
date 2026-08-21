@@ -7,6 +7,9 @@ class RouteNames {
   static const String customerProducts = 'customer_products';
   static const String productDetails = 'product_details';
   static const String customerCategories = 'customer_categories';
+  static const String categoryDetails = 'category_details';
+  static const String projects = 'projects';
+  static const String projectDetails = 'project_details';
   static const String gallery = 'gallery';
   static const String about = 'about';
   static const String contact = 'contact';

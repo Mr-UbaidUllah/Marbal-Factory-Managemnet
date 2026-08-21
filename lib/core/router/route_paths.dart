@@ -6,6 +6,10 @@ class RoutePaths {
   static const String contact = '/contact';
   static const String products = '/products';
   static const String productDetails = '/products/:id';
+  static const String categories = '/categories';
+  static const String categoryDetails = '/categories/:id';
+  static const String projects = '/projects';
+  static const String projectDetails = '/projects/:id';
   static const String quoteRequest = '/quote-request';
   static const String publicQuoteDetails = '/quotes/:id';
 

@@ -11,7 +11,7 @@ import '../bloc/quote_request_bloc.dart';
 import '../bloc/quote_state.dart';
 
 class QuoteRequestPage extends StatefulWidget {
-  const QuoteRequestPage({super.key});
+  const QuoteRequestPage({super.key, String? productId});
 
   @override
   State<QuoteRequestPage> createState() => _QuoteRequestPageState();

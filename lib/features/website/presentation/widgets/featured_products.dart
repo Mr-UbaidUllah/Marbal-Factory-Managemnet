@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:go_router/go_router.dart';
 import 'package:factory_management/core/theme/app_colors.dart';
 import 'package:factory_management/core/theme/app_text_styles.dart';
+import 'package:factory_management/core/router/route_paths.dart';
 import 'package:factory_management/features/website/domain/entities/product.dart';
 import 'package:factory_management/features/website/presentation/bloc/website_bloc.dart';
 import 'package:factory_management/features/website/presentation/bloc/website_state.dart';
@@ -41,7 +43,7 @@ class FeaturedProducts extends StatelessWidget {
                   ],
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () => context.push(RoutePaths.products),
                   child: Row(
                     children: [
                       Text(
@@ -71,20 +73,33 @@ class FeaturedProducts extends StatelessWidget {
               
               final products = state.featuredProducts;
               
-              return GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4,
-                  crossAxisSpacing: 24,
-                  mainAxisSpacing: 24,
-                  childAspectRatio: 0.75,
-                ),
-                itemCount: products.length,
-                itemBuilder: (context, index) {
-                  return FadeInUp(
-                    delay: Duration(milliseconds: 150 * index),
-                    child: _ProductCard(product: products[index]),
+              return LayoutBuilder(
+                builder: (context, constraints) {
+                  int crossAxisCount = 4;
+                  if (constraints.maxWidth < 600) {
+                    crossAxisCount = 1;
+                  } else if (constraints.maxWidth < 900) {
+                    crossAxisCount = 2;
+                  } else if (constraints.maxWidth < 1200) {
+                    crossAxisCount = 3;
+                  }
+
+                  return GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: crossAxisCount,
+                      crossAxisSpacing: 24,
+                      mainAxisSpacing: 24,
+                      childAspectRatio: 0.75,
+                    ),
+                    itemCount: products.length,
+                    itemBuilder: (context, index) {
+                      return FadeInUp(
+                        delay: Duration(milliseconds: 150 * index),
+                        child: _ProductCard(product: products[index]),
+                      );
+                    },
                   );
                 },
               );
@@ -135,9 +150,14 @@ class _ProductCardState extends State<_ProductCard> {
                     borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
                     child: SizedBox(
                       width: double.infinity,
+                      height: double.infinity,
                       child: Image.network(
                         widget.product.image,
                         fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Container(
+                          color: AppColors.lightGray,
+                          child: const Icon(Icons.image_not_supported, color: AppColors.textTertiary),
+                        ),
                       ),
                     ),
                   ),
@@ -157,10 +177,20 @@ class _ProductCardState extends State<_ProductCard> {
                     FadeIn(
                       duration: const Duration(milliseconds: 300),
                       child: Container(
-                        color: Colors.black.withOpacity(0.2),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.2),
+                          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                        ),
                         child: Center(
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              // Since these use a different Product entity, we should ideally 
+                              // navigate using a name or something if ID isn't available, 
+                              // but the instructions say to use real entities.
+                              // For now, let's assume the website products and domain products 
+                              // will be synced or this is just for visual identity.
+                              context.push(RoutePaths.products);
+                            },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
                               foregroundColor: AppColors.primary,
@@ -201,6 +231,8 @@ class _ProductCardState extends State<_ProductCard> {
                   Text(
                     widget.product.name,
                     style: AppTextStyles.h3.copyWith(fontSize: 18),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Text(

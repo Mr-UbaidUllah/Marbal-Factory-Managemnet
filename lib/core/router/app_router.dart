@@ -16,9 +16,16 @@ import 'package:factory_management/features/products/presentation/pages/product_
 import 'package:factory_management/features/categories/presentation/pages/categories_page.dart';
 import 'package:factory_management/features/categories/presentation/pages/category_form_page.dart';
 import 'package:factory_management/features/website/presentation/pages/website_home_page.dart';
+import 'package:factory_management/features/website/presentation/pages/website_products_page.dart';
+import 'package:factory_management/features/website/presentation/pages/website_product_details_page.dart';
+import 'package:factory_management/features/website/presentation/pages/website_categories_page.dart';
+import 'package:factory_management/features/website/presentation/pages/website_category_details_page.dart';
+import 'package:factory_management/features/website/presentation/pages/website_projects_page.dart';
+import 'package:factory_management/features/website/presentation/pages/website_project_details_page.dart';
 import 'package:factory_management/features/quotations/presentation/pages/quotations_page.dart' hide QuotationsPage;
 import 'package:factory_management/features/quotations/presentation/pages/quote_details_page.dart';
 import 'package:factory_management/features/quotations/presentation/pages/quote_response_page.dart';
+import 'package:factory_management/features/quotations/presentation/pages/quote_request_page.dart';
 import 'package:factory_management/features/orders/presentation/pages/orders_page.dart' hide OrdersPage;
 import 'package:factory_management/features/orders/presentation/pages/order_details_page.dart';
 import 'package:factory_management/features/orders/presentation/pages/order_invoice_page.dart';
@@ -38,7 +45,13 @@ class AppRouter {
       
       final bool isPublicRoute = state.uri.path == RoutePaths.home || 
                                  state.uri.path == RoutePaths.login ||
-                                 state.uri.path.startsWith('/products') ||
+                                 state.uri.path == RoutePaths.products ||
+                                 state.uri.path.startsWith('/products/') ||
+                                 state.uri.path == RoutePaths.categories ||
+                                 state.uri.path.startsWith('/categories/') ||
+                                 state.uri.path == RoutePaths.projects ||
+                                 state.uri.path.startsWith('/projects/') ||
+                                 state.uri.path == RoutePaths.quoteRequest ||
                                  state.uri.path.startsWith('/quotes/') ||
                                  state.uri.path == RoutePaths.about ||
                                  state.uri.path == RoutePaths.contact;
@@ -68,6 +81,46 @@ class AppRouter {
         path: RoutePaths.home,
         name: RouteNames.home,
         builder: (context, state) => const WebsiteHomePage(),
+      ),
+      GoRoute(
+        path: RoutePaths.products,
+        name: RouteNames.customerProducts,
+        builder: (context, state) {
+          final categoryId = state.uri.queryParameters['category'];
+          return WebsiteProductsPage(initialCategoryId: categoryId);
+        },
+      ),
+      GoRoute(
+        path: RoutePaths.productDetails,
+        name: RouteNames.productDetails,
+        builder: (context, state) => WebsiteProductDetailsPage(productId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: RoutePaths.categories,
+        name: RouteNames.customerCategories,
+        builder: (context, state) => const WebsiteCategoriesPage(),
+      ),
+      GoRoute(
+        path: RoutePaths.categoryDetails,
+        builder: (context, state) => WebsiteCategoryDetailsPage(categoryId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: RoutePaths.projects,
+        name: RouteNames.projects,
+        builder: (context, state) => const WebsiteProjectsPage(),
+      ),
+      GoRoute(
+        path: RoutePaths.projectDetails,
+        name: RouteNames.projectDetails,
+        builder: (context, state) => WebsiteProjectDetailsPage(projectId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: RoutePaths.quoteRequest,
+        name: RouteNames.quoteRequest,
+        builder: (context, state) {
+          final productId = state.uri.queryParameters['productId'];
+          return QuoteRequestPage(productId: productId);
+        },
       ),
       GoRoute(
         path: RoutePaths.login,

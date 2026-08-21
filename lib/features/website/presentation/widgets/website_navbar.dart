@@ -27,7 +27,7 @@ class WebsiteNavbar extends StatelessWidget implements PreferredSizeWidget {
               ]
             : [],
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 20), // Reduced padding for better fit
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         children: [
           // Logo
@@ -46,19 +46,43 @@ class WebsiteNavbar extends StatelessWidget implements PreferredSizeWidget {
             ),
           ),
           const SizedBox(width: 20),
-          // Nav Links - Wrapped in Expanded and SingleChildScrollView to prevent overflow
+          // Nav Links
           Expanded(
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  _NavLink(title: "Home", isScrolled: isScrolled, isActive: true, onTap: () => context.go(RoutePaths.home)),
-                  _NavLink(title: "Products", isScrolled: isScrolled),
-                  _NavLink(title: "Categories", isScrolled: isScrolled),
-                  _NavLink(title: "Projects", isScrolled: isScrolled),
+                  _NavLink(
+                    title: "Home",
+                    isScrolled: isScrolled,
+                    onTap: () => context.go(RoutePaths.home),
+                  ),
+                  _NavLink(
+                    title: "Products",
+                    isScrolled: isScrolled,
+                    onTap: () => context.go(RoutePaths.products),
+                  ),
+                  _NavLink(
+                    title: "Categories",
+                    isScrolled: isScrolled,
+                    onTap: () => context.go(RoutePaths.categories),
+                  ),
+                  _NavLink(
+                    title: "Projects",
+                    isScrolled: isScrolled,
+                    onTap: () => context.go(RoutePaths.projects),
+                  ),
                   _NavLink(title: "Gallery", isScrolled: isScrolled),
-                  _NavLink(title: "About Us", isScrolled: isScrolled),
-                  _NavLink(title: "Contact", isScrolled: isScrolled),
+                  _NavLink(
+                    title: "About Us",
+                    isScrolled: isScrolled,
+                    onTap: () => context.go(RoutePaths.about),
+                  ),
+                  _NavLink(
+                    title: "Contact",
+                    isScrolled: isScrolled,
+                    onTap: () => context.go(RoutePaths.contact),
+                  ),
                   
                   // Login / Dashboard Link
                   BlocBuilder<AuthBloc, AuthState>(
@@ -91,7 +115,7 @@ class WebsiteNavbar extends StatelessWidget implements PreferredSizeWidget {
           // Request Quote Button
           Flexible(
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () => context.push(RoutePaths.quoteRequest),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.gold,
                 foregroundColor: Colors.white,
@@ -113,18 +137,18 @@ class WebsiteNavbar extends StatelessWidget implements PreferredSizeWidget {
 class _NavLink extends StatelessWidget {
   final String title;
   final bool isScrolled;
-  final bool isActive;
   final VoidCallback? onTap;
 
   const _NavLink({
     required this.title,
     required this.isScrolled,
-    this.isActive = false,
     this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final bool isActive = ModalRoute.of(context)?.settings.name == title.toLowerCase();
+
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       child: GestureDetector(

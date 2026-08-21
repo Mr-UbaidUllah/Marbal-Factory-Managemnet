@@ -21,6 +21,8 @@ import 'package:factory_management/features/website/data/repositories/website_re
 import 'package:factory_management/features/website/domain/repositories/website_repository.dart';
 import 'package:factory_management/features/website/domain/usecases/get_featured_products_usecase.dart';
 import 'package:factory_management/features/website/domain/usecases/submit_quote_usecase.dart';
+import 'package:factory_management/features/website/domain/usecases/get_projects_usecase.dart';
+import 'package:factory_management/features/website/domain/usecases/get_project_by_id_usecase.dart';
 import 'package:factory_management/features/website/presentation/bloc/website_bloc.dart';
 
 // Dashboard
@@ -132,9 +134,13 @@ Future<void> init() async {
   sl.registerFactory<WebsiteBloc>(() => WebsiteBloc(
         getFeaturedProductsUseCase: sl<GetFeaturedProductsUseCase>(),
         submitQuoteUseCase: sl<SubmitQuoteUseCase>(),
+        getProjectsUseCase: sl<GetProjectsUseCase>(),
+        getProjectByIdUseCase: sl<GetProjectByIdUseCase>(),
       ));
   sl.registerLazySingleton<GetFeaturedProductsUseCase>(() => GetFeaturedProductsUseCase(sl<WebsiteRepository>()));
   sl.registerLazySingleton<SubmitQuoteUseCase>(() => SubmitQuoteUseCase(sl<WebsiteRepository>()));
+  sl.registerLazySingleton<GetProjectsUseCase>(() => GetProjectsUseCase(sl<WebsiteRepository>()));
+  sl.registerLazySingleton<GetProjectByIdUseCase>(() => GetProjectByIdUseCase(sl<WebsiteRepository>()));
   
   sl.registerLazySingleton<WebsiteRepository>(
     () => WebsiteRepositoryImpl(remoteDataSource: sl<WebsiteRemoteDataSource>()),

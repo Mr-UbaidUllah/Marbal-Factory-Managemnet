@@ -3,6 +3,7 @@ import 'package:factory_management/core/errors/exception_mapper.dart';
 import 'package:factory_management/core/errors/failures.dart';
 import 'package:factory_management/features/website/data/datasources/website_remote_datasource.dart';
 import 'package:factory_management/features/website/domain/entities/product.dart';
+import 'package:factory_management/features/website/domain/entities/project.dart';
 import 'package:factory_management/features/website/domain/repositories/website_repository.dart';
 
 class WebsiteRepositoryImpl implements WebsiteRepository {
@@ -25,6 +26,26 @@ class WebsiteRepositoryImpl implements WebsiteRepository {
     try {
       await remoteDataSource.submitQuoteRequest(quoteData);
       return const Right(null);
+    } catch (e) {
+      return Left(ExceptionMapper.map(e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<Project>>> getProjects() async {
+    try {
+      final projects = await remoteDataSource.getProjects();
+      return Right(projects);
+    } catch (e) {
+      return Left(ExceptionMapper.map(e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Project>> getProjectById(String id) async {
+    try {
+      final project = await remoteDataSource.getProjectById(id);
+      return Right(project);
     } catch (e) {
       return Left(ExceptionMapper.map(e));
     }

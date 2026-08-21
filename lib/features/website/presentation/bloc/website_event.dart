@@ -17,3 +17,14 @@ class SubmitQuoteEvent extends WebsiteEvent {
   @override
   List<Object> get props => [quoteData];
 }
+
+class GetProjectsEvent extends WebsiteEvent {}
+
+class GetProjectDetailsEvent extends WebsiteEvent {
+  final String projectId;
+
+  const GetProjectDetailsEvent(this.projectId);
+
+  @override
+  List<Object> get props => [projectId];
+}
