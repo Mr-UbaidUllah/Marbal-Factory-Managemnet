@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:go_router/go_router.dart';
 import 'package:factory_management/core/theme/app_colors.dart';
 import 'package:factory_management/core/theme/app_text_styles.dart';
 import 'package:factory_management/shared/widgets/custom_card.dart';
+import 'package:factory_management/core/router/route_paths.dart';
 
 class AnalyticsSection extends StatelessWidget {
   const AnalyticsSection({super.key});
@@ -19,20 +21,20 @@ class AnalyticsSection extends StatelessWidget {
             children: [
               Expanded(
                 flex: 2,
-                child: _buildRevenueOverview(),
+                child: _buildRevenueOverview(context),
               ),
               const SizedBox(width: 24),
               Expanded(
-                child: _buildProductDistribution(),
+                child: _buildProductDistribution(context),
               ),
             ],
           );
         } else {
           return Column(
             children: [
-              _buildRevenueOverview(),
+              _buildRevenueOverview(context),
               const SizedBox(height: 24),
-              _buildProductDistribution(),
+              _buildProductDistribution(context),
             ],
           );
         }
@@ -40,10 +42,12 @@ class AnalyticsSection extends StatelessWidget {
     );
   }
 
-  Widget _buildRevenueOverview() {
+  Widget _buildRevenueOverview(BuildContext context) {
     return CustomCard(
       height: 400,
-      margin: const EdgeInsets.only(bottom: 16), onTap: () {  }, title: '',
+      margin: const EdgeInsets.only(bottom: 16),
+      onTap: () => context.go('${RoutePaths.dashboard}/${RoutePaths.analytics}'),
+      title: '',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -61,10 +65,12 @@ class AnalyticsSection extends StatelessWidget {
     );
   }
 
-  Widget _buildProductDistribution() {
+  Widget _buildProductDistribution(BuildContext context) {
     return CustomCard(
       height: 400,
-      margin: const EdgeInsets.only(bottom: 16), onTap: () {  }, title: '',
+      margin: const EdgeInsets.only(bottom: 16),
+      onTap: () => context.go('${RoutePaths.dashboard}/${RoutePaths.analytics}'),
+      title: '',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -96,20 +102,25 @@ class AnalyticsSection extends StatelessWidget {
   }
 
   Widget _buildFilterItem(String label, bool isSelected) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: isSelected ? Colors.white : Colors.transparent,
-        borderRadius: BorderRadius.circular(6),
-        boxShadow: isSelected
-            ? [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4)]
-            : null,
-      ),
-      child: Text(
-        label,
-        style: AppTextStyles.label.copyWith(
-          color: isSelected ? AppColors.primary : AppColors.textSecondary,
-          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+    return InkWell(
+      onTap: () {
+        // Here you would normally update the BLoC/State to filter data
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.white : Colors.transparent,
+          borderRadius: BorderRadius.circular(6),
+          boxShadow: isSelected
+              ? [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4)]
+              : null,
+        ),
+        child: Text(
+          label,
+          style: AppTextStyles.label.copyWith(
+            color: isSelected ? AppColors.primary : AppColors.textSecondary,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+          ),
         ),
       ),
     );

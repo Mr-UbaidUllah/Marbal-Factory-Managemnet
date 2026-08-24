@@ -9,6 +9,7 @@ import 'package:factory_management/features/orders/presentation/bloc/order_bloc.
 import 'package:factory_management/features/orders/presentation/bloc/order_state.dart';
 import 'package:factory_management/features/orders/domain/entities/order.dart';
 import 'package:factory_management/features/orders/presentation/widgets/order_status_badge.dart';
+import 'package:factory_management/core/router/route_paths.dart';
 
 class RecentOrdersTable extends StatelessWidget {
   const RecentOrdersTable({super.key});
@@ -22,7 +23,7 @@ class RecentOrdersTable extends StatelessWidget {
 
         return CustomCard(
           margin: const EdgeInsets.only(bottom: 16),
-          onTap: () {}, // Interaction handled by rows
+          onTap: () => context.go('${RoutePaths.dashboard}/${RoutePaths.orders}'),
           title: '',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -34,7 +35,7 @@ class RecentOrdersTable extends StatelessWidget {
                   children: [
                     Text('Recent Orders', style: AppTextStyles.h3),
                     TextButton.icon(
-                      onPressed: () => context.go('/dashboard/orders'),
+                      onPressed: () => context.go('${RoutePaths.dashboard}/${RoutePaths.orders}'),
                       icon: const Icon(Icons.arrow_forward, size: 16),
                       label: Text(
                         'View All',
@@ -120,7 +121,7 @@ class RecentOrdersTable extends StatelessWidget {
 
   DataRow _buildRow(BuildContext context, Order order) {
     return DataRow(
-      onSelectChanged: (_) => context.go('/dashboard/orders/${order.id}'),
+      onSelectChanged: (_) => context.go('${RoutePaths.dashboard}/${RoutePaths.orders}/${order.id}'),
       color: WidgetStateProperty.resolveWith<Color?>((states) {
         if (states.contains(WidgetState.hovered)) {
           return AppColors.primary.withOpacity(0.04);

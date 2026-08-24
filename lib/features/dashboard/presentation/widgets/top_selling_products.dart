@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:factory_management/core/theme/app_colors.dart';
 import 'package:factory_management/core/theme/app_text_styles.dart';
 import 'package:factory_management/shared/widgets/custom_card.dart';
+import 'package:factory_management/core/router/route_paths.dart';
 
 class TopSellingProducts extends StatelessWidget {
   const TopSellingProducts({super.key});
@@ -16,7 +18,7 @@ class TopSellingProducts extends StatelessWidget {
           children: [
             Text('Top Selling Products', style: AppTextStyles.h3),
             TextButton(
-              onPressed: () {},
+              onPressed: () => context.go('${RoutePaths.dashboard}/${RoutePaths.dashboardProducts}'),
               child: Text(
                 'View All',
                 style: AppTextStyles.label.copyWith(color: AppColors.primary),
@@ -32,7 +34,7 @@ class TopSellingProducts extends StatelessWidget {
             itemCount: 5,
             separatorBuilder: (context, index) => const SizedBox(width: 16),
             itemBuilder: (context, index) {
-              return _buildProductCard(index);
+              return _buildProductCard(context, index);
             },
           ),
         ),
@@ -40,40 +42,45 @@ class TopSellingProducts extends StatelessWidget {
     );
   }
 
-  Widget _buildProductCard(int index) {
+  Widget _buildProductCard(BuildContext context, int index) {
     final products = [
       {
+        'id': '1',
         'name': 'Carrara White Marble',
         'cat': 'Marble',
-        'price': '\$120/m2',
+        'price': 'SAR 120/m2',
         'sales': '420 sold',
         'rating': '4.9',
       },
       {
+        'id': '2',
         'name': 'Absolute Black Granite',
         'cat': 'Granite',
-        'price': '\$85/m2',
+        'price': 'SAR 85/m2',
         'sales': '380 sold',
         'rating': '4.8',
       },
       {
+        'id': '3',
         'name': 'Calacatta Gold',
         'cat': 'Marble',
-        'price': '\$250/m2',
+        'price': 'SAR 250/m2',
         'sales': '150 sold',
         'rating': '5.0',
       },
       {
+        'id': '4',
         'name': 'Emerald Quartzite',
         'cat': 'Slabs',
-        'price': '\$180/m2',
+        'price': 'SAR 180/m2',
         'sales': '95 sold',
         'rating': '4.7',
       },
       {
+        'id': '5',
         'name': 'Travertine Beige',
         'cat': 'Tiles',
-        'price': '\$45/m2',
+        'price': 'SAR 45/m2',
         'sales': '600 sold',
         'rating': '4.6',
       },
@@ -84,7 +91,9 @@ class TopSellingProducts extends StatelessWidget {
     return CustomCard(
       width: 220,
       padding: EdgeInsets.zero,
-       margin: const EdgeInsets.only(bottom: 16), onTap: () {  }, title: '',
+      margin: const EdgeInsets.only(bottom: 16),
+      onTap: () => context.go('${RoutePaths.dashboard}/${RoutePaths.dashboardProducts}/details/${product['id']}'),
+      title: '',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

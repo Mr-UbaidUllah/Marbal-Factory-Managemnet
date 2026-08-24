@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:factory_management/core/theme/app_colors.dart';
 import 'package:factory_management/core/theme/app_text_styles.dart';
 import 'package:factory_management/shared/widgets/custom_card.dart';
+import 'package:factory_management/core/router/route_paths.dart';
 import '../bloc/dashboard_bloc.dart';
 import '../bloc/dashboard_state.dart';
 
@@ -13,6 +15,7 @@ class StatCard extends StatelessWidget {
   final bool isPositive;
   final IconData icon;
   final Color iconColor;
+  final VoidCallback? onTap;
 
   const StatCard({
     super.key,
@@ -22,6 +25,7 @@ class StatCard extends StatelessWidget {
     required this.isPositive,
     required this.icon,
     required this.iconColor,
+    this.onTap,
   });
 
   @override
@@ -29,7 +33,7 @@ class StatCard extends StatelessWidget {
     return CustomCard(
       padding: const EdgeInsets.all(20),
       margin: const EdgeInsets.only(bottom: 16),
-      onTap: () {},
+      onTap: onTap,
       title: '',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,6 +153,7 @@ class StatisticsGrid extends StatelessWidget {
                   isPositive: true,
                   icon: Icons.payments_outlined,
                   iconColor: AppColors.gold,
+                  onTap: () => context.go('${RoutePaths.dashboard}/${RoutePaths.analytics}'),
                 ),
                 StatCard(
                   title: 'Total Orders',
@@ -157,6 +162,7 @@ class StatisticsGrid extends StatelessWidget {
                   isPositive: true,
                   icon: Icons.shopping_bag_outlined,
                   iconColor: AppColors.primary,
+                  onTap: () => context.go('${RoutePaths.dashboard}/${RoutePaths.orders}'),
                 ),
                 StatCard(
                   title: 'Pending Orders',
@@ -165,6 +171,7 @@ class StatisticsGrid extends StatelessWidget {
                   isPositive: true,
                   icon: Icons.pending_actions,
                   iconColor: AppColors.info,
+                  onTap: () => context.go('${RoutePaths.dashboard}/${RoutePaths.orders}'),
                 ),
                 StatCard(
                   title: 'Pending Quotes',
@@ -173,6 +180,7 @@ class StatisticsGrid extends StatelessWidget {
                   isPositive: false,
                   icon: Icons.request_quote_outlined,
                   iconColor: AppColors.warning,
+                  onTap: () => context.go('${RoutePaths.dashboard}/${RoutePaths.quotations}'),
                 ),
               ],
             );

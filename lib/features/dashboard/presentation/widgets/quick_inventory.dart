@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:factory_management/core/theme/app_colors.dart';
 import 'package:factory_management/core/theme/app_text_styles.dart';
 import 'package:factory_management/shared/widgets/custom_card.dart';
-
+import 'package:factory_management/core/router/route_paths.dart';
 
 class QuickInventory extends StatelessWidget {
   const QuickInventory({super.key});
@@ -10,11 +11,19 @@ class QuickInventory extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomCard(
-      margin: const EdgeInsets.only(bottom: 16), onTap: () {  }, title: '',
+      margin: const EdgeInsets.only(bottom: 16),
+      onTap: () => context.go('${RoutePaths.dashboard}/${RoutePaths.inventory}'),
+      title: '',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Quick Inventory', style: AppTextStyles.h3),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Quick Inventory', style: AppTextStyles.h3),
+              const Icon(Icons.inventory_2_outlined, size: 20, color: AppColors.textTertiary),
+            ],
+          ),
           const SizedBox(height: 24),
           _buildInventoryItem('Available Slabs', 1240, AppColors.success),
           const SizedBox(height: 16),

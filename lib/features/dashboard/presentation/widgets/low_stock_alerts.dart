@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:factory_management/core/theme/app_colors.dart';
 import 'package:factory_management/core/theme/app_text_styles.dart';
 import 'package:factory_management/shared/widgets/custom_card.dart';
-
+import 'package:factory_management/core/router/route_paths.dart';
 
 class LowStockAlerts extends StatelessWidget {
   const LowStockAlerts({super.key});
@@ -12,7 +13,19 @@ class LowStockAlerts extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Low Stock Alerts', style: AppTextStyles.h3),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Low Stock Alerts', style: AppTextStyles.h3),
+            TextButton(
+              onPressed: () => context.go('${RoutePaths.dashboard}/${RoutePaths.inventory}'),
+              child: Text(
+                'View All',
+                style: AppTextStyles.label.copyWith(color: AppColors.primary),
+              ),
+            ),
+          ],
+        ),
         const SizedBox(height: 16),
         ListView.separated(
           shrinkWrap: true,
@@ -20,14 +33,14 @@ class LowStockAlerts extends StatelessWidget {
           itemCount: 3,
           separatorBuilder: (context, index) => const SizedBox(height: 12),
           itemBuilder: (context, index) {
-            return _buildAlertCard(index);
+            return _buildAlertCard(context, index);
           },
         ),
       ],
     );
   }
 
-  Widget _buildAlertCard(int index) {
+  Widget _buildAlertCard(BuildContext context, int index) {
     final alerts = [
       {'name': 'Statuario Marble', 'stock': '2 Slabs', 'min': '10 Slabs'},
       {'name': 'Golden Spider', 'stock': '5 Slabs', 'min': '15 Slabs'},
@@ -38,7 +51,9 @@ class LowStockAlerts extends StatelessWidget {
     return CustomCard(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       border: Border.all(color: AppColors.error.withValues(alpha: 0.2)),
-      margin: const EdgeInsets.only(bottom: 16), onTap: () {  }, title: '',
+      margin: const EdgeInsets.only(bottom: 16),
+      onTap: () => context.go('${RoutePaths.dashboard}/${RoutePaths.inventory}'),
+      title: '',
       child: Row(
         children: [
           Container(
